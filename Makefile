@@ -1,4 +1,4 @@
-PRECOMMIT_VERSION="2.12.0"
+PRECOMMIT_VERSION="2.16.0"
 
 .PHONY: pre-commit
 pre-commit:
