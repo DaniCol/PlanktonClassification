@@ -1,13 +1,12 @@
 """This module aims to load and process the data."""
+# pylint: disable=import-error
+import argparse
+import torchvision.datasets as datasets
+import torchvision.transforms as transforms
 
-import argparse  # pylint: disable=import-error
-import torch  # pylint: disable=import-error
-import torchvision.datasets as datasets  # pylint: disable=import-error
-import torchvision.transforms as transforms  # pylint: disable=import-error
+from torch.utils.data import DataLoader
 
-from torch.utils.data import DataLoader  # pylint: disable=import-error
-
-from utils import DatasetTransformer, SquarePad
+from utils import DatasetTransformer, SquarePad, random_split_for_unbalanced_dataset
 
 
 def main(
@@ -34,13 +33,8 @@ def main(
     new_width, new_height = 300, 300
 
     # Load the dataset for the training/validation sets
-    train_valid_dataset = datasets.ImageFolder(path_to_train)
-
-    # Split it into training and validation sets
-    nb_train = int((1.0 - valid_ratio) * len(train_valid_dataset))
-    nb_valid = len(train_valid_dataset) - nb_train
-    train_dataset, valid_dataset = torch.utils.data.dataset.random_split(
-        dataset=train_valid_dataset, lengths=[nb_train, nb_valid]
+    train_dataset, valid_dataset = random_split_for_unbalanced_dataset(
+        path_to_train=path_to_train, valid_ratio=valid_ratio
     )
 
     # Load the test set
