@@ -32,4 +32,4 @@ DATASET:
   TRAIN: train
 TRAIN:
   EPOCH: 50
-  LOG_DIR: 'visualisation/metrics'
+  LOG_DIR: 'tensorboard/metrics'

@@ -8,8 +8,8 @@ import yaml
 
 from torch.utils.data import DataLoader
 
-from preprocessing import DatasetTransformer, apply_preprocessing
-from dataset_utils import random_split_for_unbalanced_dataset, basic_random_split
+from data.preprocessing import DatasetTransformer, apply_preprocessing
+from data.dataset_utils import random_split_for_unbalanced_dataset, basic_random_split
 
 
 def main(cfg):
@@ -88,20 +88,3 @@ def main(cfg):
         )
 
     return train_loader, valid_loader, test_loader
-
-
-if __name__ == "__main__":
-    # Init the parser
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-
-    # Add path to config file to the command line arguments
-    parser.add_argument(
-        "--path_to_config", type=str, required=True, help="path to config file"
-    )
-
-    # Parse arguments
-    args = parser.parse_args()
-
-    with open(args.path_to_config, "r") as ymlfile:
-        config = yaml.load(ymlfile, Loader=yaml.CFullLoader)
-    main(cfg=config)
