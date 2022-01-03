@@ -1,13 +1,13 @@
-DATA_DIR: '/home/gbarree/dl/test_pytorch/data'
+DATA_DIR: '../data'
 OUTPUT_DIR: '../models'
 DATASET:
   DATA_FORMAT: jpg
   PREPROCESSING:
     SQUARE_PADDING:
-      ACTIVE: False
+      ACTIVE: True
       INPUT_SIZE: 300
     RESIZE_CROP:
-      ACTIVE: True
+      ACTIVE: False
       INPUT_SIZE: 128
     NORMALIZE: True
     FLIP:
