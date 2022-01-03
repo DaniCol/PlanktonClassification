@@ -1,9 +1,8 @@
-"""Define useful functions and classes for the loader module."""
+"""This file contains all functions related to the dataset."""
 # pylint: disable=import-error
 import os
 import torch
 import torchvision.datasets as datasets
-import torchvision.transforms as transforms
 
 # Load and split training and validation dataset
 
@@ -18,7 +17,6 @@ def find_classes(directory):
         (Tuple[List[str], Dict[str, int]]): Classe and dictionary mapping each class to an index
     """
     cls_name = os.path.basename(directory)
-
     class_to_idx = {cls_name: int(cls_name[:3])}
     return [cls_name], class_to_idx
 
@@ -127,61 +125,26 @@ def random_split_for_unbalanced_dataset(path_to_train, valid_ratio):
     return train_dataset, valid_dataset
 
 
-# Data transformation
+def basic_random_split(path_to_train, valid_ratio):
+    """This function split each class according to a ratio to create
+    validation and training dataset.
 
+    Args:
+        path_to_train (str): root directory path.
+        valid_ratio (float): ratio of data for validation dataset.
 
-class DatasetTransformer(torch.utils.data.Dataset):
-    """Apply transformation to a torch Dataset
+    Returns:
+        tuple[List, List]: training and validation datasets.
     """
 
-    def __init__(self, base_dataset, transform):
-        """Initialize DatasetTransformer class
+    train_valid_dataset = datasets.ImageFolder(path_to_train)
 
-        Args:
-            base_dataset (torchvision.datasets.folder.ImageFolder): Image dataset
-            transform (torchvision.transforms.Compose): List of transformation to apply
-        """
-        self.base_dataset = base_dataset
-        self.transform = transform
+    # Split it into training and validation sets
+    nb_train = int((1.0 - valid_ratio) * len(train_valid_dataset))
+    nb_valid = len(train_valid_dataset) - nb_train
 
-    def __getitem__(self, index):
-        img, target = self.base_dataset[index]
-        return self.transform(img), target
+    train_dataset, valid_dataset = torch.utils.data.dataset.random_split(
+        dataset=train_valid_dataset, lengths=[nb_train, nb_valid]
+    )
 
-    def __len__(self):
-        return len(self.base_dataset)
-
-
-class SquarePad:  # pylint: disable=too-few-public-methods
-    """This class aims to resize images with zero padding by centering the images
-    """
-
-    def __init__(self, new_height, new_width) -> None:
-        """Initialize the SquarePad class
-
-        Args:
-            new_height (int): Height of the output image
-            new_width (int): Width of the output image
-        """
-        self.new_height = new_height
-        self.new_width = new_width
-
-    def __call__(self, image):
-        """Return the reshaped image
-
-        Args:
-            image (torch.Tensor): Image to resize
-
-        Returns:
-            torch.Tensor: Reshaped image (... x new_height x new_width)
-        """
-        height, width = image.shape[1:]
-
-        left_pad = int((self.new_width - width) / 2)
-        rigth_pad = self.new_width - (left_pad + width)
-
-        top_pad = int((self.new_height - height) / 2)
-        bottom_pad = self.new_height - (top_pad + height)
-
-        padding = (left_pad, top_pad, rigth_pad, bottom_pad)
-        return transforms.functional.pad(image, padding, 1.0, "constant")
+    return train_dataset, valid_dataset
