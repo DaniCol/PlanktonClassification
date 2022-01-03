@@ -1,30 +1,27 @@
 import torch
 import torch.nn as nn
 
-import torchvision                                                       
-import torchvision.transforms as transforms
-
 def test_one_epoch(model, loader, f_loss, device):
-    """Test the model for one epoch 
+    """Test the model for one epoch
 
     Args:
         model (torch.nn.module): the architecture of the network
         loader (torch.utils.data.DataLoader): pytorch loader containing the data
         f_loss (torch.nn.module): Cross_entropy loss for classification
-        device (torch.device): cuda 
+        device (torch.device): cuda
 
     Returns:
-        tot_loss/N (float) : accumulated loss over one epoch 
+        tot_loss/N (float) : accumulated loss over one epoch
         correct/N (float) : accuracy over one epoch
     """
-    
+
     # We disable gradient computation which speeds up the computation
     # and reduces the memory usage
     with torch.no_grad():
         # We enter evaluation mode. This is useless for the linear model
         # but is important with layers such as dropout, batchnorm, ..
         model.eval()
-        N = 0
+        n = 0
         tot_loss, correct = 0.0, 0.0
         for i, (inputs, targets) in enumerate(loader):
 
@@ -40,7 +37,7 @@ def test_one_epoch(model, loader, f_loss, device):
             outputs = model(inputs)
 
             # We accumulate the exact number of processed samples
-            N += inputs.shape[0]
+            n += inputs.shape[0]
 
             # We accumulate the loss considering
             # The multipliation by inputs.shape[0] is due to the fact
@@ -53,4 +50,4 @@ def test_one_epoch(model, loader, f_loss, device):
             # we can compute the label by argmaxing directly the scores
             predicted_targets = outputs.argmax(dim=1)
             correct += (predicted_targets == targets).sum().item()
-        return tot_loss/N, correct/N
+        return tot_loss / n, correct / n
