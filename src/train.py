@@ -7,8 +7,8 @@ import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 
 from models.LinearNet import LinearNet
-from models.trainer import train_one_epoch
-from models.tester import test_one_epoch
+from tools.trainer import train_one_epoch
+from tools.valid import test_one_epoch
 import data.loader as loader
 
 
@@ -20,7 +20,7 @@ def main(cfg):
     """
 
     # Load data
-    train_loader, valid_loader, test_loader = loader.main(cfg=cfg)
+    train_loader, valid_loader,_ = loader.main(cfg=cfg)
 
     # Define device
     if torch.cuda.is_available():
