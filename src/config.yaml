@@ -35,4 +35,5 @@ TRAIN:
   LOG_DIR: 'tensorboard/metrics'
 TEST:
   PATH_TO_MODEL: '../models/blablablabla.pth'
+  PATH_TO_CSV: './something'
 
