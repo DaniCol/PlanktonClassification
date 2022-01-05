@@ -15,7 +15,7 @@ def inference(cfg):
     """
 
     # Open the csv_file to save the results
-    f = open('path/to/csv_file', 'w')
+    f = open(cfg['TEST']['PATH_TO_CSV'], 'w')
 
     # create the csv writer
     writer = csv.writer(f)
