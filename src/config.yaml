@@ -33,6 +33,7 @@ DATASET:
 TRAIN:
   EPOCH: 50
   LOG_DIR: 'tensorboard/metrics'
+  SAVE_DIR: '../models'
 TEST:
   PATH_TO_MODEL: '../models/blablablabla.pth'
   PATH_TO_CSV: './something'
