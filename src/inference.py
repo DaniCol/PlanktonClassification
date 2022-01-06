@@ -1,6 +1,7 @@
 import torch 
 import yaml
 import csv
+import argparse
 
 import data.loader as loader
 from models.LinearNet import LinearNet
@@ -21,10 +22,10 @@ def inference(cfg):
     writer = csv.writer(f)
 
     # write the header of the csv file
-    writer.writerow('imgname,label')
+    writer.writerow(['imgname','label'])
    
     # Load test data
-    _ ,_ , test_loader = loader.main(cfg=cfg)
+    _ ,_ , test_dataloader = loader.main(cfg=cfg)
 
     # Define device
     if torch.cuda.is_available():
@@ -34,26 +35,27 @@ def inference(cfg):
 
     # Load model
     input_size = cfg["DATASET"]["PREPROCESSING"]["SQUARE_PADDING"]["INPUT_SIZE"]
-    model = LinearNet(1 * input_size ** 2, cfg["TEST"]["PATH_TO_MODEL"])
-    model.load_state_dict(torch.load())
+    model = LinearNet(1 * input_size ** 2, cfg["DATASET"]["NUM_CLASSES"])
+    model.load_state_dict(torch.load(cfg["TEST"]["PATH_TO_MODEL"]))
     model.eval()
 
     #TODO renvoyer le nom de l'image dans le test_loader pour pouvoir ecrire les bons trucs dans le csv file
     for images, names in test_dataloader:
+        print(names)
         images = images.to(device)
         outputs = model(images)
         predicted_targets = outputs.argmax(dim=1).tolist()
 
         # Write the predictions of the batch on the csv file
         for i,name in enumerate(names):
-            writer.writerow("{},{}".format(name,predicted_targets[i]))
+            writer.writerow([name,predicted_targets[i]])
 
     # close the file
     f.close()
 
 
 if __name__=="__main__":
-        # Init the parser
+    # Init the parser
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 
     # Add path to the config file to the command line arguments

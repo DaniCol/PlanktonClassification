@@ -90,6 +90,25 @@ class ImageFolderReader(datasets.ImageFolder):
         return make_dataset(directory, class_to_idx, extensions=extensions)
 
 
+class TestLoader(datasets.ImageFolder):
+    def __getitem__(self,index):
+        """
+        Args:
+            index (int): Index
+
+        Returns:
+            tuple: (sample, target) where target is class_index of the target class.
+        """
+        path, target = self.samples[index]
+        sample = self.loader(path)
+        if self.transform is not None:
+            sample = self.transform(sample)
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return sample, path.split('/')[-1]
+
+
 def random_split_for_unbalanced_dataset(path_to_train, valid_ratio):
     """This function split each class according to a ratio to create
     validation and training dataset.
