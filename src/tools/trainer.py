@@ -1,5 +1,3 @@
-# pylint: disable=import-error
-
 import torch
 import torch.nn as nn
 

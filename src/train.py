@@ -7,10 +7,18 @@ import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 
 from models.LinearNet import LinearNet
-from models.trainer import train_one_epoch
-from models.tester import test_one_epoch
+from tools.trainer import train_one_epoch
+from tools.valid import test_one_epoch, ModelCheckpoint
 import data.loader as loader
 
+def generate_unique_logpath(logdir, raw_run_name):
+    i = 0
+    while(True):
+        run_name = raw_run_name + "_" + str(i)
+        log_path = os.path.join(logdir, run_name)
+        if not os.path.isdir(log_path):
+            return log_path
+        i = i + 1
 
 def main(cfg):
     """Main pipeline to train a model
@@ -20,7 +28,7 @@ def main(cfg):
     """
 
     # Load data
-    train_loader, valid_loader, test_loader = loader.main(cfg=cfg)
+    train_loader, valid_loader,_ = loader.main(cfg=cfg)
 
     # Define device
     if torch.cuda.is_available():
@@ -44,13 +52,26 @@ def main(cfg):
     # Tracking with tensorboard
     tensorboard_writer = SummaryWriter(log_dir=cfg["TRAIN"]["LOG_DIR"])
 
+    # Init directory to save model saving best models 
+    top_logdir = cfg["TRAIN"]["SAVE_DIR"]
+    save_dir = generate_unique_logpath(top_logdir, "linear")
+    if not os.path.exists(save_dir):
+        os.mkdir(save_dir)
+
+    # Init Checkpoint class 
+    checkpoint = ModelCheckpoint(os.path.join(save_dir,"best_model.pth"), model)
+
     # Launch training loop
     for t in range(cfg["TRAIN"]["EPOCH"]):
+        print("EPOCH : {}".format(t))
 
         train_loss, train_acc = train_one_epoch(
             model, train_loader, f_loss, optimizer, device
         )
         val_loss, val_acc = test_one_epoch(model, valid_loader, f_loss, device)
+
+        # Save best checkpoint
+        checkpoint.update(val_loss)
 
         # Track performances with tensorboard
         tensorboard_writer.add_scalar(
@@ -65,6 +86,7 @@ def main(cfg):
         tensorboard_writer.add_scalar(
             os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_acc"), val_acc, t
         )
+    
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ import yaml
 from torch.utils.data import DataLoader
 
 from data.preprocessing import DatasetTransformer, apply_preprocessing
-from data.dataset_utils import random_split_for_unbalanced_dataset, basic_random_split
+from data.dataset_utils import random_split_for_unbalanced_dataset, basic_random_split, TestLoader
 
 
 def main(cfg):
@@ -36,7 +36,7 @@ def main(cfg):
         )
 
     # Load the test set
-    test_dataset = datasets.ImageFolder(path_to_test)
+    test_dataset = TestLoader(path_to_test)
 
     # DatasetTransformer
     data_transforms = apply_preprocessing(cfg=cfg["DATASET"]["PREPROCESSING"])

@@ -1,6 +1,20 @@
 import torch
 import torch.nn as nn
 
+
+class ModelCheckpoint:
+
+    def __init__(self, filepath, model):
+        self.min_loss = None
+        self.filepath = filepath
+        self.model = model
+
+    def update(self, loss):
+        if (self.min_loss is None) or (loss < self.min_loss):
+            print("Saving a better model")
+            torch.save(self.model.state_dict(), self.filepath)
+            self.min_loss = loss
+
 def test_one_epoch(model, loader, f_loss, device):
     """Test the model for one epoch
 
