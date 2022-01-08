@@ -7,7 +7,7 @@ Deep plankton classification - Kaggle Challenge. This challenge is proposed in t
 
 ```
 cd ./src
-python3 train.py --path_to_config ./config.yml
+python3 train.py --path_to_config ./config.yaml
 ```
 
 ## Track the training with tensorboard
@@ -21,5 +21,5 @@ tensorboard --logdir ./tensorboard/
 
 ```
 cd ./src
-python3 inference.py --path_to_config ./config.yml
+python3 inference.py --path_to_config ./config.yaml
 ```

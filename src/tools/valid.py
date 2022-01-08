@@ -1,8 +1,14 @@
+"""This module define the function to test the model on one epoch."""
+# pylint: disable=import-error, no-name-in-module
 import torch
-import torch.nn as nn
+import tqdm
+
+from sklearn.metrics import f1_score
 
 
-class ModelCheckpoint:
+class ModelCheckpoint:  # pylint: disable=too-few-public-methods
+    """Define the model checkpoint class
+    """
 
     def __init__(self, filepath, model):
         self.min_loss = None
@@ -10,10 +16,16 @@ class ModelCheckpoint:
         self.model = model
 
     def update(self, loss):
+        """Update the model if the we get a smaller lost
+
+        Args:
+            loss (float): Loss over one epoch
+        """
         if (self.min_loss is None) or (loss < self.min_loss):
             print("Saving a better model")
             torch.save(self.model.state_dict(), self.filepath)
             self.min_loss = loss
+
 
 def test_one_epoch(model, loader, f_loss, device):
     """Test the model for one epoch
@@ -27,6 +39,7 @@ def test_one_epoch(model, loader, f_loss, device):
     Returns:
         tot_loss/N (float) : accumulated loss over one epoch
         correct/N (float) : accuracy over one epoch
+        f1_score_ (float) : f1 score over one epoch
     """
 
     # We disable gradient computation which speeds up the computation
@@ -35,9 +48,11 @@ def test_one_epoch(model, loader, f_loss, device):
         # We enter evaluation mode. This is useless for the linear model
         # but is important with layers such as dropout, batchnorm, ..
         model.eval()
-        n = 0
+        n_samples = 0
         tot_loss, correct = 0.0, 0.0
-        for i, (inputs, targets) in enumerate(loader):
+        predicted_targets_all, targets_all = None, None
+
+        for inputs, targets in tqdm.tqdm(loader):
 
             # We got a minibatch from the loader within inputs and targets
             # With a mini batch size of 128, we have the following shapes
@@ -51,7 +66,7 @@ def test_one_epoch(model, loader, f_loss, device):
             outputs = model(inputs)
 
             # We accumulate the exact number of processed samples
-            n += inputs.shape[0]
+            n_samples += inputs.shape[0]
 
             # We accumulate the loss considering
             # The multipliation by inputs.shape[0] is due to the fact
@@ -64,4 +79,21 @@ def test_one_epoch(model, loader, f_loss, device):
             # we can compute the label by argmaxing directly the scores
             predicted_targets = outputs.argmax(dim=1)
             correct += (predicted_targets == targets).sum().item()
-        return tot_loss / n, correct / n
+
+            # Concat the result in order to compute f1-score
+            if predicted_targets_all is None:
+                predicted_targets_all = predicted_targets
+                targets_all = targets
+            else:
+                predicted_targets_all = torch.cat(
+                    (predicted_targets_all, predicted_targets)
+                )
+                targets_all = torch.cat((targets_all, targets))
+
+        f1_score_ = f1_score(
+            y_true=targets_all.cpu().int().numpy(),
+            y_pred=predicted_targets_all.cpu().int().numpy(),
+            average="weighted",
+        )
+
+        return tot_loss / n_samples, correct / n_samples, f1_score_
