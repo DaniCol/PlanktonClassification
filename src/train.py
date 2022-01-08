@@ -1,3 +1,5 @@
+"""This module aims to launch a training procedure."""
+# pylint: disable=import-error, no-name-in-module
 import os
 import argparse
 import yaml
@@ -11,16 +13,27 @@ from tools.trainer import train_one_epoch
 from tools.valid import test_one_epoch, ModelCheckpoint
 import data.loader as loader
 
+
 def generate_unique_logpath(logdir, raw_run_name):
+    """Verify if the path already exist
+
+    Args:
+        logdir (str): path to log dir
+        raw_run_name (str): name of the file
+
+    Returns:
+        str: path to the output file
+    """
     i = 0
-    while(True):
+    while True:
         run_name = raw_run_name + "_" + str(i)
         log_path = os.path.join(logdir, run_name)
         if not os.path.isdir(log_path):
             return log_path
         i = i + 1
 
-def main(cfg):
+
+def main(cfg):  # pylint: disable=too-many-locals
     """Main pipeline to train a model
 
     Args:
@@ -28,7 +41,7 @@ def main(cfg):
     """
 
     # Load data
-    train_loader, valid_loader,_ = loader.main(cfg=cfg)
+    train_loader, valid_loader = loader.main(cfg=cfg)
 
     # Define device
     if torch.cuda.is_available():
@@ -52,18 +65,18 @@ def main(cfg):
     # Tracking with tensorboard
     tensorboard_writer = SummaryWriter(log_dir=cfg["TRAIN"]["LOG_DIR"])
 
-    # Init directory to save model saving best models 
+    # Init directory to save model saving best models
     top_logdir = cfg["TRAIN"]["SAVE_DIR"]
     save_dir = generate_unique_logpath(top_logdir, "linear")
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
 
-    # Init Checkpoint class 
-    checkpoint = ModelCheckpoint(os.path.join(save_dir,"best_model.pth"), model)
+    # Init Checkpoint class
+    checkpoint = ModelCheckpoint(os.path.join(save_dir, "best_model.pth"), model)
 
     # Launch training loop
-    for t in range(cfg["TRAIN"]["EPOCH"]):
-        print("EPOCH : {}".format(t))
+    for epoch in range(cfg["TRAIN"]["EPOCH"]):
+        print("EPOCH : {}".format(epoch))
 
         train_loss, train_acc = train_one_epoch(
             model, train_loader, f_loss, optimizer, device
@@ -75,18 +88,17 @@ def main(cfg):
 
         # Track performances with tensorboard
         tensorboard_writer.add_scalar(
-            os.path.join(cfg["TRAIN"]["LOG_DIR"], "train_loss"), train_loss, t
+            os.path.join(cfg["TRAIN"]["LOG_DIR"], "train_loss"), train_loss, epoch
         )
         tensorboard_writer.add_scalar(
-            os.path.join(cfg["TRAIN"]["LOG_DIR"], "train_acc"), train_acc, t
+            os.path.join(cfg["TRAIN"]["LOG_DIR"], "train_acc"), train_acc, epoch
         )
         tensorboard_writer.add_scalar(
-            os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_loss"), val_loss, t
+            os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_loss"), val_loss, epoch
         )
         tensorboard_writer.add_scalar(
-            os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_acc"), val_acc, t
+            os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_acc"), val_acc, epoch
         )
-    
 
 
 if __name__ == "__main__":
@@ -104,6 +116,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.path_to_config, "r") as ymlfile:
-        cfg = yaml.load(ymlfile, Loader=yaml.CFullLoader)
+        config_file = yaml.load(ymlfile, Loader=yaml.CFullLoader)
 
-    main(cfg)
+    main(cfg=config_file)
