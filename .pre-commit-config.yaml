@@ -18,3 +18,6 @@ repos:
     rev: pylint-2.6.0
     hooks:
       - id: pylint
+        args:
+          - --ignore-imports=yes
+          - -d duplicate-code

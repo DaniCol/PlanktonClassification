@@ -79,10 +79,10 @@ def main(cfg):  # pylint: disable=too-many-locals
     for epoch in range(cfg["TRAIN"]["EPOCH"]):
         print("EPOCH : {}".format(epoch))
 
-        train_loss, train_acc = train_one_epoch(
+        train_loss, train_acc, train_f1 = train_one_epoch(
             model, train_loader, f_loss, optimizer, device
         )
-        val_loss, val_acc = test_one_epoch(model, valid_loader, f_loss, device)
+        val_loss, val_acc, val_f1 = test_one_epoch(model, valid_loader, f_loss, device)
 
         # Save best checkpoint
         checkpoint.update(val_loss)
@@ -95,10 +95,16 @@ def main(cfg):  # pylint: disable=too-many-locals
             os.path.join(cfg["TRAIN"]["LOG_DIR"], "train_acc"), train_acc, epoch
         )
         tensorboard_writer.add_scalar(
+            os.path.join(cfg["TRAIN"]["LOG_DIR"], "train_f1"), train_f1, epoch
+        )
+        tensorboard_writer.add_scalar(
             os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_loss"), val_loss, epoch
         )
         tensorboard_writer.add_scalar(
             os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_acc"), val_acc, epoch
+        )
+        tensorboard_writer.add_scalar(
+            os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_f1"), val_f1, epoch
         )
 
 
