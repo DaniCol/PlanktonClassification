@@ -8,6 +8,7 @@ import yaml
 import data.loader as loader
 from models.LinearNet import LinearNet
 from models.ConvNet import ConvNet
+from tools.utils import find_input_size
 
 
 def inference(cfg):
@@ -36,7 +37,7 @@ def inference(cfg):
         device = torch.device("cuda")
 
     # Load model for inference
-    input_size = cfg["DATASET"]["PREPROCESSING"]["SQUARE_PADDING"]["INPUT_SIZE"]
+    input_size = find_input_size(cfg=cfg["DATASET"]["PREPROCESSING"])
     model = LinearNet(1 * input_size ** 2, cfg["DATASET"]["NUM_CLASSES"])
     model.load_state_dict(torch.load(cfg["TEST"]["PATH_TO_MODEL"]))
     model.eval()
