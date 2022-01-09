@@ -31,7 +31,7 @@ DATASET:
   TEST: test
   TRAIN: train
 TRAIN:
-  EPOCH: 50
+  EPOCH: 10
   LOG_DIR: 'tensorboard/metrics'
   SAVE_DIR: '../models'
 TEST:

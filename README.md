@@ -23,3 +23,17 @@ tensorboard --logdir ./tensorboard/
 cd ./src
 python3 inference.py --path_to_config ./config.yaml
 ```
+
+## Connect to the cluster
+
+Documentation dcejs : https://dce.pages.centralesupelec.fr/
+
+Reservation :
+```
+Without reservation
+gpu_prod_long
+walltime 08:00
+```
+
+Batch training tutorial :
+https://dce.pages.centralesupelec.fr/05_examples/#a-more-advanced-sbatch
