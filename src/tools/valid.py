@@ -17,19 +17,26 @@ class ModelCheckpoint:  # pylint: disable=too-few-public-methods
         self.dir_path = dir_path
         self.model = model
 
-    def update(self, loss):
+    def update(self, loss, epoch):
         """Update the model if the we get a smaller lost
 
         Args:
             loss (float): Loss over one epoch
         """
 
-        filepath = os.path.join(self.dir_path, "best_model.pth")
+        best_model_filepath = os.path.join(self.dir_path, "best_model.pth")
 
         if (self.min_loss is None) or (loss < self.min_loss):
             print("Saving a better model")
-            torch.save(self.model.state_dict(), filepath)
+            torch.save(self.model.state_dict(), best_model_filepath)
             self.min_loss = loss
+
+        print(f"EPOCH: {epoch}")
+        if epoch in [9, 19, 29, 39, 49]:
+
+            print(f"Saving model at Epoch {epoch + 1}")
+            filepath = os.path.join(self.dir_path, "epoch_{epoch}_model.pth")
+            torch.save(self.model.state_dict(), filepath)
 
 
 def test_one_epoch(model, loader, f_loss, device):

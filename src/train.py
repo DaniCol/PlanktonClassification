@@ -85,7 +85,7 @@ def main(cfg):  # pylint: disable=too-many-locals
         val_loss, val_acc, val_f1 = test_one_epoch(model, valid_loader, f_loss, device)
 
         # Save best checkpoint
-        checkpoint.update(val_loss)
+        checkpoint.update(val_loss, epoch)
 
         # Track performances with tensorboard
         tensorboard_writer.add_scalar(
