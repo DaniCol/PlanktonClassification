@@ -2,7 +2,9 @@
 # pylint: disable=import-error, no-name-in-module
 import os
 import argparse
+from shutil import copyfile
 import yaml
+
 
 import torch
 import torch.nn as nn
@@ -34,11 +36,12 @@ def generate_unique_logpath(logdir, raw_run_name):
         i = i + 1
 
 
-def main(cfg):  # pylint: disable=too-many-locals
+def main(cfg, path_to_config):  # pylint: disable=too-many-locals
     """Main pipeline to train a model
 
     Args:
         cfg (dict): config with all the necessary parameters
+        path_to_config(string): path to the config file
     """
 
     # Load data
@@ -60,16 +63,18 @@ def main(cfg):  # pylint: disable=too-many-locals
     f_loss = nn.CrossEntropyLoss()
 
     # Define the optimizer
-    optimizer = torch.optim.Adam(model.parameters(),lr=cfg["TRAIN"]["LR_INITIAL"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=cfg["TRAIN"]["LR_INITIAL"])
 
     # Tracking with tensorboard
     tensorboard_writer = SummaryWriter(log_dir=cfg["TRAIN"]["LOG_DIR"])
 
     # Init directory to save model saving best models
     top_logdir = cfg["TRAIN"]["SAVE_DIR"]
-    save_dir = generate_unique_logpath(top_logdir, "linear")
+    save_dir = generate_unique_logpath(top_logdir, cfg["TRAIN"]["LOG_DIR"])
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
+
+    copyfile(path_to_config, save_dir)
 
     # Init Checkpoint class
     checkpoint = ModelCheckpoint(
@@ -77,7 +82,12 @@ def main(cfg):  # pylint: disable=too-many-locals
     )
 
     # Lr scheduler
-    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = cfg["TRAIN"]["LR_DECAY"], patience = cfg["TRAIN"]["LR_PATIENCE"])
+    scheduler = lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode="max",
+        factor=cfg["TRAIN"]["LR_DECAY"],
+        patience=cfg["TRAIN"]["LR_PATIENCE"],
+    )
 
     # Launch training loop
     for epoch in range(cfg["TRAIN"]["EPOCH"]):
@@ -87,10 +97,10 @@ def main(cfg):  # pylint: disable=too-many-locals
             model, train_loader, f_loss, optimizer, device
         )
         val_loss, val_acc, val_f1 = test_one_epoch(model, valid_loader, f_loss, device)
-        
+
         # Update learning rate
         scheduler.step(val_f1)
-        lr = scheduler.optimizer.param_groups[0]['lr']
+        learning_rate = scheduler.optimizer.param_groups[0]["lr"]
 
         # Save best checkpoint
         checkpoint.update(val_loss, epoch)
@@ -115,7 +125,7 @@ def main(cfg):  # pylint: disable=too-many-locals
             os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_f1"), val_f1, epoch
         )
         tensorboard_writer.add_scalar(
-            os.path.join(cfg["TRAIN"]["LOG_DIR"], "lr"), lr, epoch
+            os.path.join(cfg["TRAIN"]["LOG_DIR"], "lr"), learning_rate, epoch
         )
 
 
@@ -136,4 +146,4 @@ if __name__ == "__main__":
     with open(args.path_to_config, "r") as ymlfile:
         config_file = yaml.load(ymlfile, Loader=yaml.CFullLoader)
 
-    main(cfg=config_file)
+    main(cfg=config_file, path_to_config=args.path_to_config)
