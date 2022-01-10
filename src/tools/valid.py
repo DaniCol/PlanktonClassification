@@ -1,7 +1,9 @@
 """This module define the function to test the model on one epoch."""
 # pylint: disable=import-error, no-name-in-module
+import os
 import torch
 import tqdm
+
 
 from sklearn.metrics import f1_score
 
@@ -10,9 +12,9 @@ class ModelCheckpoint:  # pylint: disable=too-few-public-methods
     """Define the model checkpoint class
     """
 
-    def __init__(self, filepath, model):
+    def __init__(self, dir_path, model):
         self.min_loss = None
-        self.filepath = filepath
+        self.dir_path = dir_path
         self.model = model
 
     def update(self, loss):
@@ -21,9 +23,12 @@ class ModelCheckpoint:  # pylint: disable=too-few-public-methods
         Args:
             loss (float): Loss over one epoch
         """
+
+        filepath = os.path.join(self.dir_path, "best_model.pth")
+
         if (self.min_loss is None) or (loss < self.min_loss):
             print("Saving a better model")
-            torch.save(self.model.state_dict(), self.filepath)
+            torch.save(self.model.state_dict(), filepath)
             self.min_loss = loss
 
 
