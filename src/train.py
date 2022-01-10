@@ -7,6 +7,7 @@ import yaml
 import torch
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
+from torch.optim import lr_scheduler
 
 from models.LinearNet import LinearNet
 from tools.trainer import train_one_epoch
@@ -76,7 +77,7 @@ def main(cfg):  # pylint: disable=too-many-locals
     checkpoint = ModelCheckpoint(os.path.join(save_dir, "best_model.pth"), model)
 
     # Lr scheduler
-    scheduler = ReduceLROnPlateau(optimizer, 'max')
+    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = cfg["TRAIN"]["LR_DECAY"], patience = cfg["TRAIN"]["LR_PATIENCE"])
 
     # Launch training loop
     for epoch in range(cfg["TRAIN"]["EPOCH"]):
@@ -88,8 +89,8 @@ def main(cfg):  # pylint: disable=too-many-locals
         val_loss, val_acc, val_f1 = test_one_epoch(model, valid_loader, f_loss, device)
         
         # Update learning rate
-        scheduler.step(val_f1, factor = cfg["TRAIN"]["LR_DECAY"], patience = cfg["TRAIN"]["LR_PATIENCE"])
-        lr = scheduler.get_lr()
+        scheduler.step(val_f1)
+        lr = scheduler.optimizer.param_groups[0]['lr']
 
         # Save best checkpoint
         checkpoint.update(val_loss)
