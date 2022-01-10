@@ -2,8 +2,28 @@
 
 Deep plankton classification - Kaggle Challenge. This challenge is proposed in the context of the Deep learning lecture.
 
+## Preprocessing
+
+Different option are available for preprocessing our data
+
+- Resizing stategy
+  - Square Padding
+  - Resize and Crop
+  - Resize (lose ratio)
+Only one has to be activated. See <a href="https://gitlab-student.centralesupelec.fr/2018barreeg/challenge-kaggle/-/blob/master/src/config.yaml#L5" title="load_model">[here]</a>
+
+- Reverse Color
+  - True: Black background and white image
+  - False: White background and black image
+- Normalize
+  - If you want to normalize your images
+- Data Augmentation
+  - Horizontal Flip
+  - Vertical Flip
+  - Affine
 
 ## Choose or add a new model
+
 In the configuration file you can choose :
 ```
     MODEL : 'LinearNet'
