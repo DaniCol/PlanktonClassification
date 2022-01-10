@@ -3,13 +3,18 @@ OUTPUT_DIR: '../models'
 DATASET:
   DATA_FORMAT: jpg
   PREPROCESSING:
+    REVERSE_COLOR: True
     SQUARE_PADDING:
       ACTIVE: True
       INPUT_SIZE: 300
     RESIZE_CROP:
       ACTIVE: False
       INPUT_SIZE: 128
-    NORMALIZE: True
+    RESIZE:
+      ACTIVE: False
+      INPUT_SIZE: 64
+    NORMALIZE:
+      ACTIVE: True
     FLIP:
       HORIZONTAL:
         ACTIVE: True
@@ -34,10 +39,10 @@ TRAIN:
   EPOCH: 10
   LOG_DIR: 'tensorboard/metrics'
   SAVE_DIR: '../models'
+  MODEL: 'LinearNet'
   LR_INITIAL : 0.001
   LR_DECAY: 0.01
   LR_PATIENCE : 5 
 TEST:
   PATH_TO_MODEL: '../models/linear_0/best_model.pth'
   PATH_TO_CSV: './test.csv'
-
