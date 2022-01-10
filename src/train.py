@@ -7,6 +7,7 @@ import yaml
 import torch
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
+from torch.optim import lr_scheduler
 
 from tools.trainer import train_one_epoch
 from tools.utils import find_input_size, load_model
@@ -59,7 +60,7 @@ def main(cfg):  # pylint: disable=too-many-locals
     f_loss = nn.CrossEntropyLoss()
 
     # Define the optimizer
-    optimizer = torch.optim.Adam(model.parameters())
+    optimizer = torch.optim.Adam(model.parameters(),lr=cfg["TRAIN"]["LR_INITIAL"])
 
     # Tracking with tensorboard
     tensorboard_writer = SummaryWriter(log_dir=cfg["TRAIN"]["LOG_DIR"])
@@ -73,6 +74,9 @@ def main(cfg):  # pylint: disable=too-many-locals
     # Init Checkpoint class
     checkpoint = ModelCheckpoint(os.path.join(save_dir, "best_model.pth"), model)
 
+    # Lr scheduler
+    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = cfg["TRAIN"]["LR_DECAY"], patience = cfg["TRAIN"]["LR_PATIENCE"])
+
     # Launch training loop
     for epoch in range(cfg["TRAIN"]["EPOCH"]):
         print("EPOCH : {}".format(epoch))
@@ -81,6 +85,10 @@ def main(cfg):  # pylint: disable=too-many-locals
             model, train_loader, f_loss, optimizer, device
         )
         val_loss, val_acc, val_f1 = test_one_epoch(model, valid_loader, f_loss, device)
+        
+        # Update learning rate
+        scheduler.step(val_f1)
+        lr = scheduler.optimizer.param_groups[0]['lr']
 
         # Save best checkpoint
         checkpoint.update(val_loss)
@@ -103,6 +111,9 @@ def main(cfg):  # pylint: disable=too-many-locals
         )
         tensorboard_writer.add_scalar(
             os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_f1"), val_f1, epoch
+        )
+        tensorboard_writer.add_scalar(
+            os.path.join(cfg["TRAIN"]["LOG_DIR"], "lr"), lr, epoch
         )
 
 
