@@ -21,3 +21,7 @@ repos:
         args:
           - --ignore-imports=yes
           - -d duplicate-code
+          - -d import-error
+          - -d no-name-in-module
+          - -d redefined-outer-name
+          - -d no-else-return

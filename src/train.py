@@ -8,9 +8,8 @@ import torch
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 
-from models.LinearNet import LinearNet
 from tools.trainer import train_one_epoch
-from tools.utils import find_input_size
+from tools.utils import find_input_size, load_model
 from tools.valid import test_one_epoch, ModelCheckpoint
 import data.loader as loader
 
@@ -52,9 +51,8 @@ def main(cfg):  # pylint: disable=too-many-locals
 
     # Define the model
     input_size = find_input_size(cfg=cfg["DATASET"]["PREPROCESSING"])
-    model = LinearNet(
-        1 * input_size ** 2, cfg["DATASET"]["NUM_CLASSES"]
-    )  # 1*input because we only have one channel (gray scale)
+
+    model = load_model(cfg, input_size, cfg["DATASET"]["NUM_CLASSES"])
     model = model.to(device)
 
     # Define the loss

@@ -1,4 +1,6 @@
 """This module aims to define utils function for the project."""
+from models.ConvNet import ConvNet
+from models.LinearNet import LinearNet
 
 
 def find_input_size(cfg):
@@ -16,3 +18,20 @@ def find_input_size(cfg):
     elif cfg["RESIZE_CROP"]["ACTIVE"]:
         input_size = cfg["RESIZE_CROP"]["INPUT_SIZE"]
     return input_size
+
+
+def load_model(cfg, input_size, num_classes):
+    """This function aims to load the right model regarding the configuration file
+
+    Args:
+        cfg (dict): Configuration file
+
+    Returns:
+        nn.Module: Neural Network
+    """
+    if cfg["TRAIN"]["MODEL"] == "LinearNet":
+        return LinearNet(input_size=1 * input_size ** 2, num_classes=num_classes)
+    elif cfg["TRAIN"]["MODEL"] == "ConvNet":
+        return ConvNet(input_size=1 * input_size ** 2, num_classes=num_classes)
+    else:
+        return LinearNet(input_size=1 * input_size ** 2, num_classes=num_classes)

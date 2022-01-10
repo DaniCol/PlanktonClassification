@@ -34,7 +34,7 @@ TRAIN:
   EPOCH: 10
   LOG_DIR: 'tensorboard/metrics'
   SAVE_DIR: '../models'
+  MODEL: 'LinearNet'
 TEST:
   PATH_TO_MODEL: '../models/linear_0/best_model.pth'
   PATH_TO_CSV: './test.csv'
-
