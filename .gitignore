@@ -156,10 +156,8 @@ src/tensorboard/
 # Models
 models/*
 
-# CSV file 
+# CSV file
 src/test.csv
 
-
-
-
-
+# Local config file
+src/config _local.yaml
