@@ -160,4 +160,4 @@ models/*
 src/test.csv
 
 # Local config file
-src/config _local.yaml
+src/config_local.yaml
