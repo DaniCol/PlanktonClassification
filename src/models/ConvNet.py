@@ -3,31 +3,39 @@
 import torch
 import torch.nn as nn
 
-
 class ConvNet(nn.Module):  # pylint: disable=too-few-public-methods
     """Define our Convolutional model"""
 
     def __init__(self, input_size, num_classes):
         super(ConvNet, self).__init__()  # pylint: disable=super-with-arguments
         self.layers = nn.Sequential(
-            nn.Conv2d(1, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.Conv2d(1, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
-            nn.Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(
-                kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False
-            ),
-            nn.Conv2d(16, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(
                 kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False
             ),
-        )
-        self.classifier = nn.Linear(
-            (input_size // 4) * (input_size // 4) * 32, num_classes
-        )
+            nn.Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(128),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(128),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(
+                kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False
+            ),
+            nn.Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            nn.AvgPool2d(input_size//4))
+
+        self.classifier = nn.Linear(256, num_classes)
 
     def forward(self, x):  # pylint : disable=invalid-name, redefined-outer-name
         """Define the forward method
