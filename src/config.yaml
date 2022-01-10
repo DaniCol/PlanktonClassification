@@ -3,12 +3,16 @@ OUTPUT_DIR: '../models'
 DATASET:
   DATA_FORMAT: jpg
   PREPROCESSING:
+    REVERSE_COLOR: True
     SQUARE_PADDING:
       ACTIVE: True
       INPUT_SIZE: 300
     RESIZE_CROP:
       ACTIVE: False
       INPUT_SIZE: 128
+    RESIZE:
+      ACTIVE: False
+      INPUT_SIZE: 64
     NORMALIZE: True
     FLIP:
       HORIZONTAL:
