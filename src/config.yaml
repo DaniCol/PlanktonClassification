@@ -34,6 +34,9 @@ TRAIN:
   EPOCH: 10
   LOG_DIR: 'tensorboard/metrics'
   SAVE_DIR: '../models'
+  LR_INITIAL : 0.001
+  LR_DECAY: 0.01
+  LR_PATIENCE : 5 
 TEST:
   PATH_TO_MODEL: '../models/linear_0/best_model.pth'
   PATH_TO_CSV: './test.csv'
