@@ -1,30 +1,50 @@
 """This module define the function to test the model on one epoch."""
 # pylint: disable=import-error, no-name-in-module
+import os
+
+import numpy
 import torch
 import tqdm
+
 
 from sklearn.metrics import f1_score
 
 
 class ModelCheckpoint:  # pylint: disable=too-few-public-methods
+
     """Define the model checkpoint class
     """
 
-    def __init__(self, filepath, model):
+    def __init__(self, dir_path, model, epochs, checkpoint_step):
         self.min_loss = None
-        self.filepath = filepath
+        self.dir_path = dir_path
+        self.best_model_filepath = os.path.join(self.dir_path, "best_model.pth")
         self.model = model
+        self.epochs = epochs
+        self.checkpoint_step = checkpoint_step
 
-    def update(self, loss):
+    def update(self, loss, epoch):
         """Update the model if the we get a smaller lost
 
         Args:
             loss (float): Loss over one epoch
         """
+
         if (self.min_loss is None) or (loss < self.min_loss):
             print("Saving a better model")
-            torch.save(self.model.state_dict(), self.filepath)
+            torch.save(self.model.state_dict(), self.best_model_filepath)
             self.min_loss = loss
+
+        if epoch in numpy.arange(
+            self.checkpoint_step - 1, self.epochs, self.checkpoint_step
+        ):
+
+            print(f"Saving model at Epoch {epoch}")
+
+            filename = "epoch_" + str(epoch) + "_model.pth"
+
+            filepath = os.path.join(self.dir_path, filename)
+            torch.save(self.model.state_dict(), filepath)
 
 
 def test_one_epoch(model, loader, f_loss, device):

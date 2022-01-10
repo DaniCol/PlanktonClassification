@@ -156,8 +156,11 @@ src/tensorboard/
 # Models
 models/*
 
-# Normalized images
-src/data/normalized_images/
-
 # CSV file
 src/test.csv
+
+# Local config file
+src/config_local.yaml
+
+# Normalized images
+src/data/normalized_images/

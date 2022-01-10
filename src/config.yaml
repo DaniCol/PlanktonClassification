@@ -37,6 +37,7 @@ DATASET:
   TRAIN: train
 TRAIN:
   EPOCH: 10
+  CHECKPOINT_STEP: 10
   LOG_DIR: 'tensorboard/metrics'
   SAVE_DIR: '../models'
   MODEL: 'LinearNet'

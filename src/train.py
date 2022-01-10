@@ -72,7 +72,9 @@ def main(cfg):  # pylint: disable=too-many-locals
         os.mkdir(save_dir)
 
     # Init Checkpoint class
-    checkpoint = ModelCheckpoint(os.path.join(save_dir, "best_model.pth"), model)
+    checkpoint = ModelCheckpoint(
+        save_dir, model, cfg["TRAIN"]["EPOCH"], cfg["TRAIN"]["CHECKPOINT_STEP"]
+    )
 
     # Lr scheduler
     scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = cfg["TRAIN"]["LR_DECAY"], patience = cfg["TRAIN"]["LR_PATIENCE"])
@@ -91,7 +93,7 @@ def main(cfg):  # pylint: disable=too-many-locals
         lr = scheduler.optimizer.param_groups[0]['lr']
 
         # Save best checkpoint
-        checkpoint.update(val_loss)
+        checkpoint.update(val_loss, epoch)
 
         # Track performances with tensorboard
         tensorboard_writer.add_scalar(
