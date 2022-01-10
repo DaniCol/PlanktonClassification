@@ -1,6 +1,8 @@
 """This module define the function to test the model on one epoch."""
 # pylint: disable=import-error, no-name-in-module
 import os
+
+import numpy
 import torch
 import tqdm
 
@@ -9,13 +11,17 @@ from sklearn.metrics import f1_score
 
 
 class ModelCheckpoint:  # pylint: disable=too-few-public-methods
+
     """Define the model checkpoint class
     """
 
-    def __init__(self, dir_path, model):
+    def __init__(self, dir_path, model, epochs, checkpoint_step):
         self.min_loss = None
         self.dir_path = dir_path
+        self.best_model_filepath = os.path.join(self.dir_path, "best_model.pth")
         self.model = model
+        self.epochs = epochs
+        self.checkpoint_step = checkpoint_step
 
     def update(self, loss, epoch):
         """Update the model if the we get a smaller lost
@@ -24,18 +30,20 @@ class ModelCheckpoint:  # pylint: disable=too-few-public-methods
             loss (float): Loss over one epoch
         """
 
-        best_model_filepath = os.path.join(self.dir_path, "best_model.pth")
-
         if (self.min_loss is None) or (loss < self.min_loss):
             print("Saving a better model")
-            torch.save(self.model.state_dict(), best_model_filepath)
+            torch.save(self.model.state_dict(), self.best_model_filepath)
             self.min_loss = loss
 
-        print(f"EPOCH: {epoch}")
-        if epoch in [9, 19, 29, 39, 49]:
+        if epoch in numpy.arange(
+            self.checkpoint_step - 1, self.epochs, self.checkpoint_step
+        ):
 
-            print(f"Saving model at Epoch {epoch + 1}")
-            filepath = os.path.join(self.dir_path, "epoch_{epoch}_model.pth")
+            print(f"Saving model at Epoch {epoch}")
+
+            filename = "epoch_" + str(epoch) + "_model.pth"
+
+            filepath = os.path.join(self.dir_path, filename)
             torch.save(self.model.state_dict(), filepath)
 
 

@@ -73,7 +73,9 @@ def main(cfg):  # pylint: disable=too-many-locals
         os.mkdir(save_dir)
 
     # Init Checkpoint class
-    checkpoint = ModelCheckpoint(save_dir, model)
+    checkpoint = ModelCheckpoint(
+        save_dir, model, cfg["TRAIN"]["EPOCH"], cfg["TRAIN"]["CHECKPOINT_STEP"]
+    )
 
     # Launch training loop
     for epoch in range(cfg["TRAIN"]["EPOCH"]):
