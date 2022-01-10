@@ -3,6 +3,7 @@
 import argparse
 import csv
 import torch
+import tqdm
 import yaml
 
 import data.loader as loader
@@ -28,7 +29,7 @@ def inference(cfg):
     writer.writerow(["imgname", "label"])
 
     # Load test data
-    test_dataloader = loader.main(cfg=cfg, only_test=True)
+    _, _, test_dataloader = loader.main(cfg=cfg)
 
     # Define device for computational efficiency
     if not torch.cuda.is_available():
@@ -44,8 +45,8 @@ def inference(cfg):
 
     # TODO_ renvoyer le nom de l'image dans le test_loader pour
     # pouvoir ecrire les bons trucs dans le csv file
-    for images, names in test_dataloader:
-        print(names)
+    for images, names in tqdm.tqdm(test_dataloader):
+        # print(names)
         images = images.to(device)
         outputs = model(images)
         predicted_targets = outputs.argmax(dim=1).tolist()

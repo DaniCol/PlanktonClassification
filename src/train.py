@@ -41,7 +41,7 @@ def main(cfg):  # pylint: disable=too-many-locals
     """
 
     # Load data
-    train_loader, valid_loader = loader.main(cfg=cfg)
+    train_loader, valid_loader, _ = loader.main(cfg=cfg)
 
     # Define device
     if torch.cuda.is_available():

@@ -13,7 +13,8 @@ DATASET:
     RESIZE:
       ACTIVE: False
       INPUT_SIZE: 64
-    NORMALIZE: True
+    NORMALIZE:
+      ACTIVE: True
     FLIP:
       HORIZONTAL:
         ACTIVE: True

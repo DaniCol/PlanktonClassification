@@ -156,10 +156,8 @@ src/tensorboard/
 # Models
 models/*
 
-# CSV file 
+# Normalized images
+src/data/normalized_images/
+
+# CSV file
 src/test.csv
-
-
-
-
-
