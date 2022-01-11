@@ -1,6 +1,7 @@
 """This file contains all functions related to preprocessing."""
 # pylint: disable=import-error
 import os
+import tqdm
 import torch
 import torchvision.transforms as transforms
 
@@ -143,7 +144,8 @@ def compute_mean_std(loader):
     """
     # Compute the mean over minibatches
     mean_img = None
-    for imgs, _ in loader:
+    print("\nCompute Mean Img")
+    for imgs, _ in tqdm.tqdm(loader):
         if mean_img is None:
             mean_img = torch.zeros_like(imgs[0])
         mean_img += imgs.sum(dim=0)
@@ -151,7 +153,8 @@ def compute_mean_std(loader):
 
     # Compute the std over minibatches
     std_img = torch.zeros_like(mean_img)
-    for imgs, _ in loader:
+    print("Compute Std Img\n")
+    for imgs, _ in tqdm.tqdm(loader):
         std_img += ((imgs - mean_img) ** 2).sum(dim=0)
     std_img /= len(loader.dataset)
     std_img = torch.sqrt(std_img)
@@ -178,10 +181,10 @@ def mean_std_image_path(cfg):
         preprocessing += f'pad_{cfg["SQUARE_PADDING"]["INPUT_SIZE"]}_'
 
     elif cfg["RESIZE_CROP"]["ACTIVE"]:
-        preprocessing += f'resize_crop_{cfg["SQUARE_PADDING"]["INPUT_SIZE"]}_'
+        preprocessing += f'resize_crop_{cfg["RESIZE_CROP"]["INPUT_SIZE"]}_'
 
     elif cfg["RESIZE"]["ACTIVE"]:
-        preprocessing += f'resize_{cfg["SQUARE_PADDING"]["INPUT_SIZE"]}_'
+        preprocessing += f'resize_{cfg["RESIZE"]["INPUT_SIZE"]}_'
 
     if cfg["REVERSE_COLOR"]:
         preprocessing += "reverse"

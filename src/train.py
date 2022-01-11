@@ -59,6 +59,13 @@ def main(cfg, path_to_config):  # pylint: disable=too-many-locals
     model = load_model(cfg, input_size, cfg["DATASET"]["NUM_CLASSES"])
     model = model.to(device)
 
+    # Load pre trained model parameters
+    if cfg["TRAIN"]["LOAD_MODEL"]["ACTIVE"]:
+        print("\n Model has been load !")
+        model.load_state_dict(
+            torch.load(cfg["TRAIN"]["LOAD_MODEL"]["PATH_TO_MODEL"].lower())
+        )
+
     # Define the loss
     f_loss = nn.CrossEntropyLoss()
 
@@ -70,8 +77,7 @@ def main(cfg, path_to_config):  # pylint: disable=too-many-locals
 
     # Init directory to save model saving best models
     top_logdir = cfg["TRAIN"]["SAVE_DIR"]
-    save_dir = generate_unique_logpath(top_logdir, cfg["TRAIN"]["LOG_DIR"])
-
+    save_dir = generate_unique_logpath(top_logdir, cfg["TRAIN"]["MODEL"].lower())
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
 
@@ -101,7 +107,7 @@ def main(cfg, path_to_config):  # pylint: disable=too-many-locals
 
         # Update learning rate
         scheduler.step(val_f1)
-        learning_rate = scheduler.optimizer.param_groups[0]["lr"]
+        lr = scheduler.optimizer.param_groups[0]["lr"]  # pylint: disable=invalid-name
 
         # Save best checkpoint
         checkpoint.update(val_loss, epoch)
@@ -145,6 +151,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.path_to_config, "r") as ymlfile:
-        config_file = yaml.load(ymlfile, Loader=yaml.CFullLoader)
+        config_file = yaml.load(ymlfile, Loader=yaml.Loader)
 
     main(cfg=config_file, path_to_config=args.path_to_config)
