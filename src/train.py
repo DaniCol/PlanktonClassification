@@ -81,7 +81,7 @@ def main(cfg, path_to_config):  # pylint: disable=too-many-locals
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
 
-    copyfile(path_to_config, os.path.join(save_dir, "config_file"))
+    copyfile(path_to_config, os.path.join(save_dir, "config_file.yaml"))
 
     # Init Checkpoint class
     checkpoint = ModelCheckpoint(
@@ -107,7 +107,7 @@ def main(cfg, path_to_config):  # pylint: disable=too-many-locals
 
         # Update learning rate
         scheduler.step(val_f1)
-        lr = scheduler.optimizer.param_groups[0]["lr"]  # pylint: disable=invalid-name
+        learning_rate = scheduler.optimizer.param_groups[0]["lr"]
 
         # Save best checkpoint
         checkpoint.update(val_loss, epoch)
