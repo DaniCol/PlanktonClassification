@@ -44,6 +44,9 @@ TRAIN:
   LR_INITIAL : 0.001
   LR_DECAY: 0.01
   LR_PATIENCE : 5
+  LOAD_MODEL:
+    ACTIVE: False
+    PATH_TO_MODEL: '../models/LinearNet_0/best_model.pth'
 TEST:
   BATCH_SIZE: 128
   PATH_TO_MODEL: '../models/LinearNet_0/best_model.pth'
