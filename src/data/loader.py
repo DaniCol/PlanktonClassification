@@ -36,18 +36,17 @@ def main(cfg):  # pylint: disable=too-many-locals
 
     # Load the dataset for the training/validation sets
     if cfg["DATASET"]["SMART_SPLIT"]:
-        train_dataset, valid_dataset, class_sample_count = random_split_for_unbalanced_dataset(
+        train_dataset, valid_dataset, targets = random_split_for_unbalanced_dataset(
             path_to_train=path_to_train, valid_ratio=cfg["DATASET"]["VALID_RATIO"]
         )
+        # Create a weighted sampler
+        train_sampler = create_weighted_sampler(targets=targets)
     else:
-        train_dataset, valid_dataset, class_sample_count = basic_random_split(
+        train_dataset, valid_dataset = basic_random_split(
             path_to_train=path_to_train, valid_ratio=cfg["DATASET"]["VALID_RATIO"]
         )
     # Load the test set
     test_dataset = TestLoader(path_to_test)
-
-    # Create a weighted sampler
-    train_sampler = create_weighted_sampler(class_sample_count=class_sample_count)
 
     # Compute mean and std images of the training dataset and save them
     if cfg["DATASET"]["PREPROCESSING"]["NORMALIZE"]["ACTIVE"]:
@@ -93,12 +92,20 @@ def main(cfg):  # pylint: disable=too-many-locals
     )
 
     # Dataloaders
-    train_loader = DataLoader(
-        dataset=train_dataset,
-        batch_size=cfg["DATASET"]["BATCH_SIZE"],
-        num_workers=cfg["DATASET"]["NUM_THREADS"],
-        sampler=train_sampler,
-    )
+    if cfg["DATASET"]["SMART_SPLIT"]:
+        train_loader = DataLoader(
+            dataset=train_dataset,
+            batch_size=cfg["DATASET"]["BATCH_SIZE"],
+            num_workers=cfg["DATASET"]["NUM_THREADS"],
+            sampler=train_sampler,
+        )
+    else:
+        train_loader = DataLoader(
+            dataset=train_dataset,
+            batch_size=cfg["DATASET"]["BATCH_SIZE"],
+            num_workers=cfg["DATASET"]["NUM_THREADS"],
+            shuffle=True,
+        )
 
     valid_loader = DataLoader(
         dataset=valid_dataset,
