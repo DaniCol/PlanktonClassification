@@ -1,4 +1,4 @@
-DATA_DIR: '/mount/Datasets1/ChallengeDeep'
+DATA_DIR: '/mounts/Datasets1/ChallengeDeep'
 OUTPUT_DIR: '../models'
 DATASET:
   DATA_FORMAT: jpg
