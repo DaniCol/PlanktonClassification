@@ -113,7 +113,7 @@ def test_one_epoch(model, loader, f_loss, device):
         f1_score_ = f1_score(
             y_true=targets_all.cpu().int().numpy(),
             y_pred=predicted_targets_all.cpu().int().numpy(),
-            average="weighted",
+            average="macro",
         )
 
         return tot_loss / n_samples, correct / n_samples, f1_score_
