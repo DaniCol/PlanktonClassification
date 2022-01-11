@@ -56,6 +56,13 @@ def main(cfg):  # pylint: disable=too-many-locals
     model = load_model(cfg, input_size, cfg["DATASET"]["NUM_CLASSES"])
     model = model.to(device)
 
+    # Load pre trained model parameters
+    if cfg["TRAIN"]["LOAD_MODEL"]["ACTIVE"]:
+        print("\n Model has been load !")
+        model.load_state_dict(
+            torch.load(cfg["TRAIN"]["LOAD_MODEL"]["PATH_TO_MODEL"].lower())
+        )
+
     # Define the loss
     f_loss = nn.CrossEntropyLoss()
 
