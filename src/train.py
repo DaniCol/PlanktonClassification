@@ -139,6 +139,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.path_to_config, "r") as ymlfile:
-        config_file = yaml.load(ymlfile, Loader=yaml.CFullLoader)
+        config_file = yaml.load(ymlfile, Loader=yaml.Loader)
 
     main(cfg=config_file)

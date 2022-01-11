@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     # Load config file
     with open(args.path_to_config, "r") as ymlfile:
-        config_file = yaml.load(ymlfile, Loader=yaml.CFullLoader)
+        config_file = yaml.load(ymlfile, Loader=yaml.Loader)
 
     # Run inference
     inference(cfg=config_file)
