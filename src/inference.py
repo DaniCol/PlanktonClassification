@@ -7,9 +7,7 @@ import tqdm
 import yaml
 
 import data.loader as loader
-from models.LinearNet import LinearNet
-from models.ConvNet import ConvNet
-from tools.utils import find_input_size
+from tools.utils import find_input_size, load_model
 
 
 def inference(cfg):
@@ -39,12 +37,13 @@ def inference(cfg):
 
     # Load model for inference
     input_size = find_input_size(cfg=cfg["DATASET"]["PREPROCESSING"])
-    model = LinearNet(1 * input_size ** 2, cfg["DATASET"]["NUM_CLASSES"])
+
+    model = load_model(cfg, input_size, cfg["DATASET"]["NUM_CLASSES"])
+    model = model.to(device)
+
     model.load_state_dict(torch.load(cfg["TEST"]["PATH_TO_MODEL"]))
     model.eval()
 
-    # TODO_ renvoyer le nom de l'image dans le test_loader pour
-    # pouvoir ecrire les bons trucs dans le csv file
     for images, names in tqdm.tqdm(test_dataloader):
         # print(names)
         images = images.to(device)

@@ -105,7 +105,7 @@ def main(cfg):  # pylint: disable=too-many-locals
     )
     test_loader = DataLoader(
         dataset=test_dataset,
-        batch_size=cfg["DATASET"]["BATCH_SIZE"],
+        batch_size=cfg["TEST"]["BATCH_SIZE"],
         shuffle=False,
         num_workers=cfg["DATASET"]["NUM_THREADS"],
     )

@@ -60,14 +60,14 @@ def main(cfg):  # pylint: disable=too-many-locals
     f_loss = nn.CrossEntropyLoss()
 
     # Define the optimizer
-    optimizer = torch.optim.Adam(model.parameters(),lr=cfg["TRAIN"]["LR_INITIAL"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=cfg["TRAIN"]["LR_INITIAL"])
 
     # Tracking with tensorboard
     tensorboard_writer = SummaryWriter(log_dir=cfg["TRAIN"]["LOG_DIR"])
 
     # Init directory to save model saving best models
     top_logdir = cfg["TRAIN"]["SAVE_DIR"]
-    save_dir = generate_unique_logpath(top_logdir, "linear")
+    save_dir = generate_unique_logpath(top_logdir, cfg["TRAIN"]["MODEL"].lower())
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
 
@@ -77,7 +77,12 @@ def main(cfg):  # pylint: disable=too-many-locals
     )
 
     # Lr scheduler
-    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode = 'max', factor = cfg["TRAIN"]["LR_DECAY"], patience = cfg["TRAIN"]["LR_PATIENCE"])
+    scheduler = lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode="max",
+        factor=cfg["TRAIN"]["LR_DECAY"],
+        patience=cfg["TRAIN"]["LR_PATIENCE"],
+    )
 
     # Launch training loop
     for epoch in range(cfg["TRAIN"]["EPOCH"]):
@@ -87,10 +92,10 @@ def main(cfg):  # pylint: disable=too-many-locals
             model, train_loader, f_loss, optimizer, device
         )
         val_loss, val_acc, val_f1 = test_one_epoch(model, valid_loader, f_loss, device)
-        
+
         # Update learning rate
         scheduler.step(val_f1)
-        lr = scheduler.optimizer.param_groups[0]['lr']
+        lr = scheduler.optimizer.param_groups[0]["lr"]  # pylint: disable=invalid-name
 
         # Save best checkpoint
         checkpoint.update(val_loss, epoch)
