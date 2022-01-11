@@ -71,10 +71,11 @@ def main(cfg, path_to_config):  # pylint: disable=too-many-locals
     # Init directory to save model saving best models
     top_logdir = cfg["TRAIN"]["SAVE_DIR"]
     save_dir = generate_unique_logpath(top_logdir, cfg["TRAIN"]["LOG_DIR"])
+
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
 
-    copyfile(path_to_config, save_dir)
+    copyfile(path_to_config, os.path.join(save_dir, "config_file"))
 
     # Init Checkpoint class
     checkpoint = ModelCheckpoint(
