@@ -178,10 +178,10 @@ def mean_std_image_path(cfg):
         preprocessing += f'pad_{cfg["SQUARE_PADDING"]["INPUT_SIZE"]}_'
 
     elif cfg["RESIZE_CROP"]["ACTIVE"]:
-        preprocessing += f'resize_crop_{cfg["SQUARE_PADDING"]["INPUT_SIZE"]}_'
+        preprocessing += f'resize_crop_{cfg["RESIZE_CROP"]["INPUT_SIZE"]}_'
 
     elif cfg["RESIZE"]["ACTIVE"]:
-        preprocessing += f'resize_{cfg["SQUARE_PADDING"]["INPUT_SIZE"]}_'
+        preprocessing += f'resize_{cfg["RESIZE"]["INPUT_SIZE"]}_'
 
     if cfg["REVERSE_COLOR"]:
         preprocessing += "reverse"
