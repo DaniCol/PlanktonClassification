@@ -2,7 +2,10 @@
 # pylint: disable=import-error
 import os
 import torch
+import numpy as np
 import torchvision.datasets as datasets
+
+from torch.utils.data import WeightedRandomSampler
 
 # Load and split training and validation dataset
 
@@ -90,8 +93,10 @@ class ImageFolderReader(datasets.ImageFolder):
         return make_dataset(directory, class_to_idx, extensions=extensions)
 
 
-class TestLoader(datasets.ImageFolder):
-    def __getitem__(self,index):
+class TestLoader(datasets.ImageFolder):  # pylint: disable=too-few-public-methods
+    """Load test folder"""
+
+    def __getitem__(self, index):
         """
         Args:
             index (int): Index
@@ -106,7 +111,27 @@ class TestLoader(datasets.ImageFolder):
         if self.target_transform is not None:
             target = self.target_transform(target)
 
-        return sample, path.split('/')[-1]
+        return sample, path.split("/")[-1]
+
+
+def create_weighted_sampler(class_sample_count):
+    """Create a Weighted random samplet so each class
+    is equally represented in each batch
+
+    Args:
+        class_sample_count (np.array): nb of element per class
+
+    Returns:
+        WeightedRandomSampler: the sampler
+    """
+    weight = 1.0 / class_sample_count
+    samples_weight = np.array(weight)
+
+    samples_weight = torch.from_numpy(samples_weight)
+    samples_weight = samples_weight.double()
+    sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
+
+    return sampler
 
 
 def random_split_for_unbalanced_dataset(path_to_train, valid_ratio):
@@ -118,10 +143,11 @@ def random_split_for_unbalanced_dataset(path_to_train, valid_ratio):
         valid_ratio (float): ratio of data for validation dataset.
 
     Returns:
-        tuple[List, List]: training and validation datasets.
+        tuple[List, List, Array]: training, validation datasets and nb of element per class.
     """
     train_dataset_list = []
     valid_dataset_list = []
+    class_sample_count = []
 
     for name in os.listdir(path_to_train):
 
@@ -138,10 +164,12 @@ def random_split_for_unbalanced_dataset(path_to_train, valid_ratio):
         train_dataset_list.append(temp_train_dataset)
         valid_dataset_list.append(temp_valid_dataset)
 
+        class_sample_count += [len(temp_train_dataset)]
+
     train_dataset = torch.utils.data.ConcatDataset(train_dataset_list)
     valid_dataset = torch.utils.data.ConcatDataset(valid_dataset_list)
 
-    return train_dataset, valid_dataset
+    return train_dataset, valid_dataset, np.array(class_sample_count)
 
 
 def basic_random_split(path_to_train, valid_ratio):
@@ -153,7 +181,7 @@ def basic_random_split(path_to_train, valid_ratio):
         valid_ratio (float): ratio of data for validation dataset.
 
     Returns:
-        tuple[List, List]: training and validation datasets.
+        tuple[List, List, Array]: training, validation datasets and nb of element per class.
     """
 
     train_valid_dataset = datasets.ImageFolder(path_to_train)
@@ -166,4 +194,10 @@ def basic_random_split(path_to_train, valid_ratio):
         dataset=train_valid_dataset, lengths=[nb_train, nb_valid]
     )
 
-    return train_dataset, valid_dataset
+    target = [int(train_dataset.dataset[t][1]) for t in train_dataset.indices]
+
+    class_sample_count = np.array(
+        [len(np.where(target == t)[0]) for t in np.unique(target)]
+    )
+
+    return train_dataset, valid_dataset, class_sample_count

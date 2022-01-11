@@ -5,7 +5,6 @@ import torch
 import torchvision.transforms as transforms
 
 from torch.utils.data import DataLoader
-
 from data.preprocessing import (
     DatasetTransformer,
     apply_preprocessing,
@@ -16,6 +15,7 @@ from data.dataset_utils import (
     random_split_for_unbalanced_dataset,
     basic_random_split,
     TestLoader,
+    create_weighted_sampler,
 )
 
 
@@ -36,15 +36,18 @@ def main(cfg):  # pylint: disable=too-many-locals
 
     # Load the dataset for the training/validation sets
     if cfg["DATASET"]["SMART_SPLIT"]:
-        train_dataset, valid_dataset = random_split_for_unbalanced_dataset(
+        train_dataset, valid_dataset, class_sample_count = random_split_for_unbalanced_dataset(
             path_to_train=path_to_train, valid_ratio=cfg["DATASET"]["VALID_RATIO"]
         )
     else:
-        train_dataset, valid_dataset = basic_random_split(
+        train_dataset, valid_dataset, class_sample_count = basic_random_split(
             path_to_train=path_to_train, valid_ratio=cfg["DATASET"]["VALID_RATIO"]
         )
     # Load the test set
     test_dataset = TestLoader(path_to_test)
+
+    # Create a weighted sampler
+    train_sampler = create_weighted_sampler(class_sample_count=class_sample_count)
 
     # Compute mean and std images of the training dataset and save them
     if cfg["DATASET"]["PREPROCESSING"]["NORMALIZE"]["ACTIVE"]:
@@ -93,8 +96,8 @@ def main(cfg):  # pylint: disable=too-many-locals
     train_loader = DataLoader(
         dataset=train_dataset,
         batch_size=cfg["DATASET"]["BATCH_SIZE"],
-        shuffle=True,
         num_workers=cfg["DATASET"]["NUM_THREADS"],
+        sampler=train_sampler,
     )
 
     valid_loader = DataLoader(
