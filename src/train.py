@@ -107,7 +107,7 @@ def main(cfg, path_to_config):  # pylint: disable=too-many-locals
 
         # Update learning rate
         scheduler.step(val_f1)
-        learning_rate = scheduler.optimizer.param_groups[0]["lr"]
+        lr = scheduler.optimizer.param_groups[0]["lr"]  # pylint: disable=invalid-name
 
         # Save best checkpoint
         checkpoint.update(val_loss, epoch)
