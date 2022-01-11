@@ -2,7 +2,9 @@
 # pylint: disable=import-error, no-name-in-module
 import os
 import argparse
+from shutil import copyfile
 import yaml
+
 
 import torch
 import torch.nn as nn
@@ -34,11 +36,12 @@ def generate_unique_logpath(logdir, raw_run_name):
         i = i + 1
 
 
-def main(cfg):  # pylint: disable=too-many-locals
+def main(cfg, path_to_config):  # pylint: disable=too-many-locals
     """Main pipeline to train a model
 
     Args:
         cfg (dict): config with all the necessary parameters
+        path_to_config(string): path to the config file
     """
 
     # Load data
@@ -77,6 +80,8 @@ def main(cfg):  # pylint: disable=too-many-locals
     save_dir = generate_unique_logpath(top_logdir, cfg["TRAIN"]["MODEL"].lower())
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
+
+    copyfile(path_to_config, os.path.join(save_dir, "config_file"))
 
     # Init Checkpoint class
     checkpoint = ModelCheckpoint(
@@ -127,7 +132,7 @@ def main(cfg):  # pylint: disable=too-many-locals
             os.path.join(cfg["TRAIN"]["LOG_DIR"], "val_f1"), val_f1, epoch
         )
         tensorboard_writer.add_scalar(
-            os.path.join(cfg["TRAIN"]["LOG_DIR"], "lr"), lr, epoch
+            os.path.join(cfg["TRAIN"]["LOG_DIR"], "lr"), learning_rate, epoch
         )
 
 
@@ -148,4 +153,4 @@ if __name__ == "__main__":
     with open(args.path_to_config, "r") as ymlfile:
         config_file = yaml.load(ymlfile, Loader=yaml.Loader)
 
-    main(cfg=config_file)
+    main(cfg=config_file, path_to_config=args.path_to_config)
