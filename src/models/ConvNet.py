@@ -6,10 +6,10 @@ import torch.nn as nn
 class ConvNet(nn.Module):  # pylint: disable=too-few-public-methods
     """Define our Convolutional model"""
 
-    def __init__(self, input_size, num_classes):
+    def __init__(self, input_size, num_classes, channels=1):
         super(ConvNet, self).__init__()  # pylint: disable=super-with-arguments
         self.layers = nn.Sequential(
-            nn.Conv2d(1, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.Conv2d(channels, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
             nn.Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),

@@ -94,6 +94,7 @@ def main(cfg, path_to_config):  # pylint: disable=too-many-locals
         mode="max",
         factor=cfg["TRAIN"]["LR_DECAY"],
         patience=cfg["TRAIN"]["LR_PATIENCE"],
+        threshold = cfg["TRAIN"]["LR_THRESHOLD"]
     )
 
     # Launch training loop

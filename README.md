@@ -66,3 +66,44 @@ walltime 08:00
 
 Batch training tutorial :
 https://dce.pages.centralesupelec.fr/05_examples/#a-more-advanced-sbatch
+
+## Run en batch
+
+Se connecter en ssh et entrer le password.
+Créer un dossier 
+Ex : 
+
+```
+ssh gpusdi1_21@chome.metz.supelec.fr
+gpu2020sdi1
+cd "TON dossier oU YA le code"
+mkdir -p logslurms
+touch job.batch
+vim job.batch
+
+COPY n PASTE ça :
+
+#!/bin/bash 
+
+#SBATCH --job-name=emnist
+#SBATCH --nodes=1
+#SBATCH --partition=gpu_prod
+#SBATCH --time=24:00:00
+#SBATCH --output=logslurms/slurm-%j.out
+#SBATCH --error=logslurms/slurm-%j.err
+
+mkdir -p logslurms
+python3 train.py --path_to_config
+
+Ferme et save.
+Ensuite :
+
+sbatch job.batch
+
+puis liste les jobs pour voir si il tourne
+
+squeue 
+squeue -u <ton_id>
+```
+
+
