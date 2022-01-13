@@ -204,9 +204,9 @@ def apply_preprocessing(cfg, for_norm=False):
         dict: data transformation for train, valid and test dataset
     """
     data_transforms = {
-        "train": [transforms.Grayscale(num_output_channels=1)],
-        "valid": [transforms.Grayscale(num_output_channels=1)],
-        "test": [transforms.Grayscale(num_output_channels=1)],
+        "train": [transforms.Grayscale(num_output_channels=cfg["CHANNELS"])],
+        "valid": [transforms.Grayscale(num_output_channels=cfg["CHANNELS"])],
+        "test": [transforms.Grayscale(num_output_channels=cfg["CHANNELS"])],
     }
 
     for set_ in data_transforms:
