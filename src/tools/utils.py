@@ -1,6 +1,7 @@
 """This module aims to define utils function for the project."""
 from models.ConvNet import ConvNet
 from models.LinearNet import LinearNet
+from src.models.ResNet import ResNet
 
 
 def find_input_size(cfg):
@@ -36,5 +37,7 @@ def load_model(cfg, input_size, num_classes):
         return LinearNet(input_size=1 * input_size ** 2, num_classes=num_classes)
     elif cfg["TRAIN"]["MODEL"] == "ConvNet":
         return ConvNet(input_size=1 * input_size, num_classes=num_classes)
+    elif cfg["TRAIN"]["MODEL"] == "ResNet":
+        return ResNet(input_size=1 * input_size, num_classes=num_classes)
     else:
         return LinearNet(input_size=1 * input_size ** 2, num_classes=num_classes)
