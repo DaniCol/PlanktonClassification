@@ -1,7 +1,7 @@
 """This module aims to define utils function for the project."""
 from models.ConvNet import ConvNet
 from models.LinearNet import LinearNet
-from models.ResNet_confuse import ResNet
+from models.ResNet import ResNet
 
 
 def find_input_size(cfg):
