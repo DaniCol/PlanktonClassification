@@ -54,9 +54,9 @@ TEST:
   PATH_TO_MODEL: '../models/LinearNet_0/best_model.pth'
   PATH_TO_CSV: './test.csv'
 
-HRNet: 
+HRNet:
   NAME: cls_hrnet
-  IMAGE_SIZE: 
+  IMAGE_SIZE:
     - 224
     - 224
   EXTRA:

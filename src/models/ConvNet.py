@@ -3,6 +3,7 @@
 import torch
 import torch.nn as nn
 
+
 class ConvNet(nn.Module):  # pylint: disable=too-few-public-methods
     """Define our Convolutional model"""
 
@@ -33,7 +34,8 @@ class ConvNet(nn.Module):  # pylint: disable=too-few-public-methods
             nn.Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
-            nn.AvgPool2d(input_size//4))
+            nn.AvgPool2d(input_size // 4),
+        )
 
         self.classifier = nn.Linear(256, num_classes)
 
