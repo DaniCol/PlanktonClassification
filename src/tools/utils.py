@@ -40,7 +40,7 @@ def load_model(cfg, input_size, num_classes):
         return ConvNet(
             input_size=1 * input_size,
             num_classes=num_classes,
-            channels=cfg["DATASET"]["CHANNELS"],
+            channels=cfg["DATASET"]['PREPROCESSING']["CHANNELS"],
         )
     elif cfg["TRAIN"]["MODEL"] == "ResNet":
         return ResNet(input_size=1 * input_size, num_classes=num_classes)
