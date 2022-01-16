@@ -6,14 +6,14 @@ DATASET:
     CHANNELS : 3
     REVERSE_COLOR: True
     SQUARE_PADDING:
-      ACTIVE: True
+      ACTIVE: False
       INPUT_SIZE: 300
     RESIZE_CROP:
       ACTIVE: False
       INPUT_SIZE: 128
     RESIZE:
-      ACTIVE: False
-      INPUT_SIZE: 64
+      ACTIVE: True
+      INPUT_SIZE: 128
     NORMALIZE:
       ACTIVE: True
     FLIP:
@@ -41,10 +41,10 @@ TRAIN:
   CHECKPOINT_STEP: 10
   LOG_DIR: 'tensorboard/metrics'
   SAVE_DIR: '../models'
-  MODEL: 'HRNet'
-  LR_INITIAL : 0.001
-  LR_DECAY: 0.1
-  LR_PATIENCE : 5
+  MODEL: 'EfficientNet'
+  LR_INITIAL : 0.005
+  LR_DECAY: 0.01
+  LR_PATIENCE : 3
   LR_THRESHOLD : 0.02
   LOAD_MODEL:
     ACTIVE: False
