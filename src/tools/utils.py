@@ -1,4 +1,5 @@
 """This module aims to define utils function for the project."""
+import torchvision
 from models.ConvNet import ConvNet
 from models.LinearNet import LinearNet
 from models.HRNet import get_HRNet
@@ -42,6 +43,8 @@ def load_model(cfg, input_size, num_classes):
             num_classes=num_classes,
             channels=cfg["DATASET"]['PREPROCESSING']["CHANNELS"],
         )
+    elif cfg["TRAIN"]["MODEL"] == "EfficientNet":
+        return torchvision.models.efficientnet_b2(pretrained = False, progress = True, num_classes = cfg["DATASET"]["NUM_CLASSES"])
     elif cfg["TRAIN"]["MODEL"] == "ResNet":
         return ResNet(input_size=1 * input_size, num_classes=num_classes)
     elif cfg["TRAIN"]["MODEL"] == "HRNet":
