@@ -4,6 +4,7 @@ from models.ConvNet import ConvNet
 from models.LinearNet import LinearNet
 from models.HRNet import get_HRNet
 from models.ResNet import ResNet
+from models.EfficientNet import EfficientNet
 
 
 def find_input_size(cfg):
@@ -44,7 +45,7 @@ def load_model(cfg, input_size, num_classes):
             channels=cfg["DATASET"]['PREPROCESSING']["CHANNELS"],
         )
     elif cfg["TRAIN"]["MODEL"] == "EfficientNet":
-        return torchvision.models.efficientnet_b2(pretrained = False, progress = True, num_classes = cfg["DATASET"]["NUM_CLASSES"])
+        return EfficientNet.from_name('efficientnet-b2')
     elif cfg["TRAIN"]["MODEL"] == "ResNet":
         return ResNet(input_size=1 * input_size, num_classes=num_classes)
     elif cfg["TRAIN"]["MODEL"] == "HRNet":
