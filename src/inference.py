@@ -27,7 +27,7 @@ def inference(cfg):
     writer.writerow(["imgname", "label"])
 
     # Load test data
-    _, _, test_dataloader = loader.main(cfg=cfg)
+    test_dataloader = loader.main(cfg=cfg, only_test=True)
 
     # Define device for computational efficiency
     if not torch.cuda.is_available():
