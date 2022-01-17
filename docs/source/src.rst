@@ -9,7 +9,42 @@ Subpackages
 
    src.data
    src.models
-   src.visualization
+   src.tools
+
+Submodules
+----------
+
+src.average\_inference module
+-----------------------------
+
+.. automodule:: src.average_inference
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.inference module
+--------------------
+
+.. automodule:: src.inference
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.job module
+--------------
+
+.. automodule:: src.job
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.train module
+----------------
+
+.. automodule:: src.train
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
