@@ -4,6 +4,14 @@ src.data package
 Submodules
 ----------
 
+src.data.dataset\_utils module
+------------------------------
+
+.. automodule:: src.data.dataset_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 src.data.loader module
 ----------------------
 
@@ -12,10 +20,10 @@ src.data.loader module
    :undoc-members:
    :show-inheritance:
 
-src.data.utils module
----------------------
+src.data.preprocessing module
+-----------------------------
 
-.. automodule:: src.data.utils
+.. automodule:: src.data.preprocessing
    :members:
    :undoc-members:
    :show-inheritance:

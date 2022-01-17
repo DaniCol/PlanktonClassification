@@ -59,7 +59,7 @@ def test_one_epoch(model, loader, f_loss, device):
     Returns:
         tot_loss/N (float) : accumulated loss over one epoch
         correct/N (float) : accuracy over one epoch
-        f1_score_ (float) : f1 score over one epoch
+        f1_score (float) : f1 score over one epoch
     """
 
     # We disable gradient computation which speeds up the computation

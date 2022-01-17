@@ -21,7 +21,7 @@ def train_one_epoch(
     Returns:
         tot_loss/N (float) : accumulated loss over one epoch
         correct/N (float) : accuracy over one epoch
-        f1_score_ (float) : f1 score over one epoch
+        f1_score (float) : f1 score over one epoch
     """
 
     model.train()

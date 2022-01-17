@@ -15,9 +15,10 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
+sys.path.insert(0, os.path.abspath("../../src"))
 sys.path.insert(0, os.path.abspath("../../src/data"))
 sys.path.insert(0, os.path.abspath("../../src/models"))
-sys.path.insert(0, os.path.abspath("../../src/visualization"))
+sys.path.insert(0, os.path.abspath("../../src/tools"))
 
 
 # -- Project information -----------------------------------------------------
