@@ -2,24 +2,27 @@
 # pylint: disable=import-error, no-name-in-module, unused-import
 import argparse
 import csv
+import sys
 import torch
 import tqdm
 import yaml
 
 import numpy as np
+import pandas as pd
 import data.loader as loader
 from tools.utils import find_input_size, load_model
 
 
-def inference(cfg):
+def inference(cfg, model_path, index=0):
     """Run the inference on the test set and writes the output on a csv file
 
     Args:
         cfg (dict): configuration
+        model_path (str): path to model
     """
 
     # Open the csv_file to save the results
-    file = open(cfg["TEST"]["PATH_TO_CSV"], "w")
+    file = open(f"temp_model_{index}.csv", "w")
 
     # create the csv writer
     writer = csv.writer(file)
@@ -44,14 +47,14 @@ def inference(cfg):
         model = load_model(cfg, input_size, cfg["DATASET"]["NUM_CLASSES"])
         model = model.to(device)
 
-        model.load_state_dict(torch.load(cfg["TEST"]["PATH_TO_MODEL"]))
+        model.load_state_dict(torch.load(model_path))
         model.eval()
 
         for images, names in tqdm.tqdm(test_dataloader):
             # print(names)
             images = images.to(device)
             outputs = model(images)
-            predicted_targets = outputs.numpy().tolist()
+            predicted_targets = outputs.cpu().numpy().tolist()
 
             # Write the predictions of the batch on the csv file
             for i, name in enumerate(names):
@@ -59,6 +62,46 @@ def inference(cfg):
 
     # close the file
     file.close()
+
+
+def model_average(cfg):
+    """Compute the average prediction
+
+    Args:
+        cfg (dict): configuration
+    """
+
+    if not cfg["TEST"]["AVERAGE"]["ACTIVE"]:
+        print("You should use inference.py !")
+        sys.exit()
+
+    # Compute probabilities for every models
+    models_predictions = []
+    for index, elem in enumerate(cfg["TEST"]["AVERAGE"]["PATH"]):
+        with open(elem["CONFIG"], "r") as ymlfile:
+            config_file = yaml.load(ymlfile, Loader=yaml.Loader)
+
+        inference(cfg=config_file, model_path=elem["MODEL"], index=index)
+
+        models_predictions.append(
+            pd.read_csv(f"temp_model_{index}.csv", header=0, delimiter=",")
+        )
+
+    # Compute mean prediction
+    size = len(models_predictions)
+    predictions = np.argmax(
+        sum(models_predictions[i].iloc[:, 1:].to_numpy() for i in range(size)) / size,
+        axis=1,
+    )
+    name = models_predictions[0]["imgname"].to_numpy()
+
+    # Output format
+    results = np.concatenate((name.reshape(-1, 1), predictions.reshape(-1, 1)), axis=1)
+
+    # Save csv file
+    pd.DataFrame(results, columns=["imgname", "label"]).to_csv(
+        cfg["TEST"]["PATH_TO_CSV"], index=False
+    )
 
 
 if __name__ == "__main__":
@@ -81,5 +124,5 @@ if __name__ == "__main__":
     with open(args.path_to_config, "r") as ymlfile:
         config_file = yaml.load(ymlfile, Loader=yaml.Loader)
 
-    # Run inference
-    inference(cfg=config_file)
+    # Run model average
+    model_average(cfg=config_file)

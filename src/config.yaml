@@ -53,6 +53,11 @@ TEST:
   BATCH_SIZE: 128
   PATH_TO_MODEL: '../models/LinearNet_0/best_model.pth'
   PATH_TO_CSV: './test.csv'
+  AVERAGE:
+    ACTIVE: True
+    PATH:
+      - {MODEL: '../models/linearnet_0/best_model.pth', CONFIG: '../models/linearnet_0/config_file.yaml'}
+      - {MODEL: '../models/linearnet_1/best_model.pth', CONFIG: '../models/linearnet_1/config_file.yaml'}
 
 HRNet:
   NAME: cls_hrnet
