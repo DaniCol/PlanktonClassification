@@ -3,7 +3,7 @@ OUTPUT_DIR: '../models'
 DATASET:
   DATA_FORMAT: jpg
   PREPROCESSING:
-    CHANNELS : 1
+    CHANNELS : 3
     REVERSE_COLOR: True
     SQUARE_PADDING:
       ACTIVE: False
@@ -13,7 +13,7 @@ DATASET:
       INPUT_SIZE: 128
     RESIZE:
       ACTIVE: True
-      INPUT_SIZE: 128
+      INPUT_SIZE: 224
     NORMALIZE:
       ACTIVE: True
     FLIP:
@@ -42,7 +42,8 @@ TRAIN:
   LOG_DIR: 'tensorboard/metrics'
   SAVE_DIR: '../models'
   MODEL: 'EfficientNet'
-  LR_INITIAL : 0.005
+  PRETRAINED : True
+  LR_INITIAL : 0.001
   LR_DECAY: 0.01
   LR_PATIENCE : 3
   LR_THRESHOLD : 0.02

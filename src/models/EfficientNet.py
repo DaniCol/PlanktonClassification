@@ -168,7 +168,7 @@ class EfficientNet(nn.Module):
         Conv2d = get_same_padding_conv2d(image_size=image_size)
 
         # Stem
-        in_channels = 1  # rgb
+        in_channels = 3  # rgb
         out_channels = round_filters(32, self._global_params)  # number of output channels
         self._conv_stem = Conv2d(in_channels, out_channels, kernel_size=3, stride=2, bias=False)
         self._bn0 = nn.BatchNorm2d(num_features=out_channels, momentum=bn_mom, eps=bn_eps)
@@ -330,7 +330,7 @@ class EfficientNet(nn.Module):
 
     @classmethod
     def from_pretrained(cls, model_name, weights_path=None, advprop=False,
-                        in_channels=3, num_classes=1000, **override_params):
+                        in_channels=3, num_classes=86, **override_params):
         """Create an efficientnet model according to name.
         Args:
             model_name (str): Name for efficientnet.
