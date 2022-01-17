@@ -19,7 +19,7 @@ from data.dataset_utils import (
 )
 
 
-def main(cfg):  # pylint: disable=too-many-locals
+def main(cfg, only_test=False):  # pylint: disable=too-many-locals
     """Main function to call to load and process data
 
     Args:
@@ -29,6 +29,8 @@ def main(cfg):  # pylint: disable=too-many-locals
         tuple[DataLoader, DataLoader]: train and validation DataLoader
         DataLoader: test DataLoader
     """
+    if only_test:
+        return load_only_test(cfg=cfg)
 
     # Set test path
     path_to_train = os.path.join(cfg["DATA_DIR"], "train/")
@@ -135,3 +137,43 @@ def main(cfg):  # pylint: disable=too-many-locals
         )
 
     return train_loader, valid_loader, test_loader
+
+
+def load_only_test(cfg):
+    """Load and process test data only
+
+    Args:
+        cfg (dict): configuration file
+
+    Returns:
+        DataLoader: test DataLoader
+    """
+
+    # Set test path
+    path_to_test = os.path.join(cfg["DATA_DIR"], "test/")
+
+    # Load the test set
+    test_dataset = TestLoader(path_to_test)
+
+    # DatasetTransformer
+    data_transforms = apply_preprocessing(cfg=cfg["DATASET"]["PREPROCESSING"])
+
+    test_dataset = DatasetTransformer(
+        test_dataset, transforms.Compose(data_transforms["test"])
+    )
+
+    # Dataloaders
+    test_loader = DataLoader(
+        dataset=test_dataset,
+        batch_size=cfg["TEST"]["BATCH_SIZE"],
+        shuffle=False,
+        num_workers=cfg["DATASET"]["NUM_THREADS"],
+    )
+
+    if cfg["DATASET"]["VERBOSITY"]:
+        print(
+            f"The test set contains {len(test_loader.dataset)} images,"
+            f" in {len(test_loader)} batches"
+        )
+
+    return test_loader
