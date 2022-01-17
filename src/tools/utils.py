@@ -5,7 +5,7 @@ from models.LinearNet import LinearNet
 from models.HRNet import get_HRNet
 from models.ResNet import ResNet
 from models.EfficientNet import EfficientNet
-
+from models.SwinTransformer import SwinTransformer
 
 def find_input_size(cfg):
     """Find the input size of the image after preprocessing
@@ -49,6 +49,18 @@ def load_model(cfg, input_size, num_classes):
             return EfficientNet.from_pretrained('efficientnet-b2', num_classes = cfg["DATASET"]["NUM_CLASSES"])
         else:
             return EfficientNet.from_name('efficientnet-b2',num_classes = cfg["DATASET"]["NUM_CLASSES"])
+        
+    elif cfg["TRAIN"]["MODEL"] == "SwinTransformers":
+        return SwinTransformer(hidden_dim=96,
+                                layers=(2, 2, 6, 2),
+                                heads=(3, 6, 12, 24),
+                                channels=cfg["DATASET"]['PREPROCESSING']["CHANNELS"],
+                                num_classes=cfg["DATASET"]["NUM_CLASSES"],
+                                head_dim=32,
+                                window_size=7,
+                                downscaling_factors=(4, 2, 2, 2),
+                                relative_pos_embedding=True
+                                )
     elif cfg["TRAIN"]["MODEL"] == "ResNet":
         return ResNet(input_size=1 * input_size, num_classes=num_classes)
     elif cfg["TRAIN"]["MODEL"] == "HRNet":
