@@ -6,7 +6,7 @@ def makejob(path_to_config,name):
 #SBATCH --job-name={name}
 #SBATCH --nodes=1
 #SBATCH --partition=gpu_prod_long
-#SBATCH --time=24:00:00
+#SBATCH --time=1-23:00:00
 #SBATCH --output=logslurms/slurm-%A_%a.out
 #SBATCH --error=logslurms/slurm-%A_%a.err
 
@@ -24,4 +24,3 @@ os.system("mkdir -p logslurms")
 
 # Launch the batch jobs
 submit_job(makejob("./config.yaml", "SkuSkuSku"))
-#submit_job(makejob("./config-2.yaml", "SkuSkuSku2"))
