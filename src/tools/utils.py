@@ -45,7 +45,10 @@ def load_model(cfg, input_size, num_classes):
             channels=cfg["DATASET"]['PREPROCESSING']["CHANNELS"],
         )
     elif cfg["TRAIN"]["MODEL"] == "EfficientNet":
-        return EfficientNet.from_name('efficientnet-b2')
+        if cfg["TRAIN"]["PRETRAINED"]==True:
+            return EfficientNet.from_pretrained('efficientnet-b2', num_classes = cfg["DATASET"]["NUM_CLASSES"])
+        else:
+            return EfficientNet.from_name('efficientnet-b2',num_classes = cfg["DATASET"]["NUM_CLASSES"])
     elif cfg["TRAIN"]["MODEL"] == "ResNet":
         return ResNet(input_size=1 * input_size, num_classes=num_classes)
     elif cfg["TRAIN"]["MODEL"] == "HRNet":
