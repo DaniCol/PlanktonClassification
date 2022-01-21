@@ -55,12 +55,7 @@ def load_model(cfg, input_size, num_classes):
                                 layers=(2, 2, 6, 2),
                                 heads=(3, 6, 12, 24),
                                 channels=cfg["DATASET"]['PREPROCESSING']["CHANNELS"],
-                                num_classes=cfg["DATASET"]["NUM_CLASSES"],
-                                head_dim=32,
-                                window_size=7,
-                                downscaling_factors=(4, 2, 2, 2),
-                                relative_pos_embedding=True
-                                )
+                                num_classes=cfg["DATASET"]["NUM_CLASSES"])
     elif cfg["TRAIN"]["MODEL"] == "ResNet":
         return ResNet(input_size=1 * input_size, num_classes=num_classes)
     elif cfg["TRAIN"]["MODEL"] == "HRNet":
