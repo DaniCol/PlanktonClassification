@@ -3,8 +3,8 @@ OUTPUT_DIR: '../models'
 DATASET:
   DATA_FORMAT: jpg
   PREPROCESSING:
-    CHANNELS : 1
-    REVERSE_COLOR: True
+    CHANNELS : 3
+    REVERSE_COLOR: False
     SQUARE_PADDING:
       ACTIVE: False
       INPUT_SIZE: 300
@@ -13,7 +13,7 @@ DATASET:
       INPUT_SIZE: 128
     RESIZE:
       ACTIVE: True
-      INPUT_SIZE: 224
+      INPUT_SIZE: 150
     NORMALIZE:
       ACTIVE: True
     FLIP:
@@ -27,7 +27,7 @@ DATASET:
       ACTIVE: True
       DEGREES: 40
       TRANSLATE: [0.2, 0.2]
-  BATCH_SIZE: 256
+  BATCH_SIZE: 128
   VALID_RATIO: 0.2
   SMART_SPLIT: True
   VERBOSITY: True
@@ -37,28 +37,29 @@ DATASET:
   TEST: test
   TRAIN: train
 TRAIN:
-  EPOCH: 50
+  EPOCH: 100
   CHECKPOINT_STEP: 10
-  LOG_DIR: 'tensorboard/metrics'
+  LOG_DIR: 'tensorboard/metrics/efficientnet'
   SAVE_DIR: '../models'
-  MODEL: 'SwinTransformer'
-  PRETRAINED : True
+  MODEL: 'EfficientNet'
+  PRETRAINED : False
   LR_INITIAL : 0.001
-  LR_DECAY: 0.01
+  LR_DECAY: 0.1
   LR_PATIENCE : 3
   LR_THRESHOLD : 0.02
   LOAD_MODEL:
     ACTIVE: False
-    PATH_TO_MODEL: '../models/LinearNet_0/best_model.pth'
+    PATH_TO_MODEL: '../models/ConvNet_1/best_model.pth'
 TEST:
-  BATCH_SIZE: 256
-  PATH_TO_MODEL: '../models/LinearNet_0/best_model.pth'
+  BATCH_SIZE: 64
+  PATH_TO_MODEL: '../models/efficientnet_0/best_model.pth'
   PATH_TO_CSV: './test.csv'
   AVERAGE:
     ACTIVE: True
     PATH:
-      - {MODEL: '../models/linearnet_0/best_model.pth', CONFIG: '../models/linearnet_0/config_file.yaml'}
-      - {MODEL: '../models/linearnet_1/best_model.pth', CONFIG: '../models/linearnet_1/config_file.yaml'}
+      - {MODEL: '../models/convnet/best_model.pth', CONFIG: '../models/convnet/config_file.yaml'}
+      - {MODEL: '../models/hrnet/hrnet_best_model.pth', CONFIG: '../models/hrnet/config_file.yaml'}
+      - {MODEL: '../models/efficientnet_0/best_model.pth', CONFIG: '../models/efficientnet_0/config_file.yaml'}
 
 HRNet:
   NAME: cls_hrnet
