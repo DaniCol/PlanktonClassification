@@ -1,0 +1,116 @@
+DATA_DIR: '../data'
+OUTPUT_DIR: '../models'
+DATASET:
+  DATA_FORMAT: jpg
+  PREPROCESSING:
+    CHANNELS : 3
+    REVERSE_COLOR: False
+    SQUARE_PADDING:
+      ACTIVE: False
+      INPUT_SIZE: 300
+    RESIZE_CROP:
+      ACTIVE: False
+      INPUT_SIZE: 128
+    RESIZE:
+      ACTIVE: True
+      INPUT_SIZE: 150
+    NORMALIZE:
+      ACTIVE: True
+    FLIP:
+      HORIZONTAL:
+        ACTIVE: True
+        VALUE: 0.5
+      VERTICAL:
+        ACTIVE: True
+        VALUE: 0.5
+    AFFINE:
+      ACTIVE: True
+      DEGREES: 40
+      TRANSLATE: [0.2, 0.2]
+  BATCH_SIZE: 128
+  VALID_RATIO: 0.2
+  SMART_SPLIT: True
+  VERBOSITY: True
+  NUM_THREADS: 4
+  NUM_CLASSES: 86
+  ROOT: 'data/'
+  TEST: test
+  TRAIN: train
+TRAIN:
+  EPOCH: 100
+  CHECKPOINT_STEP: 10
+  LOG_DIR: 'tensorboard/metrics'
+  SAVE_DIR: '../models'
+  MODEL: 'EfficientNet'
+  PRETRAINED : False
+  LR_INITIAL : 0.001
+  LR_DECAY: 0.1
+  LR_PATIENCE : 3
+  LR_THRESHOLD : 0.02
+  LOAD_MODEL:
+    ACTIVE: False
+    PATH_TO_MODEL: '../models/ConvNet_1/best_model.pth'
+TEST:
+  BATCH_SIZE: 64
+  PATH_TO_MODEL: '../models/efficientnet_0/best_model.pth'
+  PATH_TO_CSV: './test.csv'
+  AVERAGE:
+    ACTIVE: False
+    PATH:
+      - {MODEL: '../models/linearnet_0/best_model.pth', CONFIG: '../models/linearnet_0/config_file.yaml'}
+      - {MODEL: '../models/linearnet_1/best_model.pth', CONFIG: '../models/linearnet_1/config_file.yaml'}
+
+HRNet:
+  NAME: cls_hrnet
+  IMAGE_SIZE:
+    - 224
+    - 224
+  EXTRA:
+    STAGE1:
+      NUM_MODULES: 1
+      NUM_RANCHES: 1
+      BLOCK: BOTTLENECK
+      NUM_BLOCKS:
+      - 4
+      NUM_CHANNELS:
+      - 64
+      FUSE_METHOD: SUM
+    STAGE2:
+      NUM_MODULES: 1
+      NUM_BRANCHES: 2
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 4
+      - 4
+      NUM_CHANNELS:
+      - 18
+      - 36
+      FUSE_METHOD: SUM
+    STAGE3:
+      NUM_MODULES: 4
+      NUM_BRANCHES: 3
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 4
+      - 4
+      - 4
+      NUM_CHANNELS:
+      - 18
+      - 36
+      - 72
+      FUSE_METHOD: SUM
+    STAGE4:
+      NUM_MODULES: 3
+      NUM_BRANCHES: 4
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 4
+      - 4
+      - 4
+      - 4
+      NUM_CHANNELS:
+      - 18
+      - 36
+      - 72
+      - 144
+      FUSE_METHOD: SUM

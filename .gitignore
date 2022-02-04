@@ -150,12 +150,6 @@ vscode/
 # Local History for Visual Studio Code
 .history/
 
-# Tensorboard tracking
-src/tensorboard/
-
-# Models
-models/*
-
 # CSV file
 src/test.csv
 src/temp_model*
