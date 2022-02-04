@@ -153,9 +153,6 @@ vscode/
 # Tensorboard tracking
 src/tensorboard/
 
-# Models
-models/*
-
 # CSV file
 src/test.csv
 src/temp_model*
