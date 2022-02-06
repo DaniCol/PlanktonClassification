@@ -5,7 +5,7 @@ from models.LinearNet import LinearNet
 from models.HRNet import get_HRNet
 from models.ResNet import ResNet
 from models.EfficientNet import EfficientNet
-from models.SwinTransformer import SwinTransformer
+#from models.SwinTransformer import SwinTransformer
 
 def find_input_size(cfg):
     """Find the input size of the image after preprocessing
