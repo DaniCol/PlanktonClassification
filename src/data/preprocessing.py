@@ -244,4 +244,7 @@ def apply_preprocessing(cfg, for_norm=False):
             cfg=cfg, data_transforms=data_transforms
         )
 
+    for set_ in data_transforms:
+        data_transforms[set_].append(transforms.Grayscale(num_output_channels=cfg["CHANNELS"]))
+
     return data_transforms
